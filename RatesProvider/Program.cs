@@ -1,2 +1,16 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+using Microsoft.Extensions.Logging.Configuration;
+using Microsoft.Extensions.Logging.EventLog;
+using RatesProvider;
+
+var builder = Host.CreateApplicationBuilder(args);
+builder.Services.AddWindowsService(options =>
+{
+    options.ServiceName = "RatesProviderService";
+});
+
+LoggerProviderOptions.RegisterProviderOptions<EventLogSettings, EventLogLoggerProvider>(builder.Services);
+builder.Services.AddHostedService<Worker>();
+builder.Logging.AddConfiguration(
+    builder.Configuration.GetSection("Logging"));
+var host = builder.Build();
+host.Run();
