@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging.Configuration;
 using Microsoft.Extensions.Logging.EventLog;
-using RatesProvider;
+using RatesProvider.Application.Configuration;
+
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddWindowsService(options =>
@@ -12,5 +13,8 @@ LoggerProviderOptions.RegisterProviderOptions<EventLogSettings, EventLogLoggerPr
 builder.Services.AddHostedService<Worker>();
 builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
-var host = builder.Build();
+
+builder.Services.AddApplicationServices();
+
+var host = builder.Build(); 
 host.Run();
