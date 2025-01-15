@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using RatesProvider.Application;
 using RatesProvider.Application.Models;
-using RatesProvider.Starter;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 
