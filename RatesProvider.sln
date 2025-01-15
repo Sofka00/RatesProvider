@@ -3,7 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter", "RatesProvider\Starter.csproj", "{5FC21888-5FEE-4E45-8EBF-1955E2C6CFBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RatesProvider.Starter", "RatesProvider\RatesProvider.Starter.csproj", "{5FC21888-5FEE-4E45-8EBF-1955E2C6CFBA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{182F90D9-6F44-428A-80EC-3D77C0B16DB3} = {182F90D9-6F44-428A-80EC-3D77C0B16DB3}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RatesProvider.Application", "RatesProvider.Application\RatesProvider.Application.csproj", "{182F90D9-6F44-428A-80EC-3D77C0B16DB3}"
 EndProject

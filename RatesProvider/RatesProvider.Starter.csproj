@@ -17,4 +17,8 @@
   <ItemGroup>
     <ProjectReference Include="..\RatesProvider.Application\RatesProvider.Application.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RatesProvider.Application\RatesProvider.Application.csproj" />
+  </ItemGroup>
 </Project>
