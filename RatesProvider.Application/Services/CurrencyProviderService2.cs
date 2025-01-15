@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace RatesProvider.Application.Services
 {
-    internal class CurrencyProvider1
+    public class CurrencyProviderService2
     {
+        //отвечаtn за получение данных о курсах валют
     }
 }
