@@ -1,12 +1,14 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using RatesProvider.Application.Interfaces;
+using RatesProvider.Application.Services;
 
 namespace RatesProvider.Application.Configuration
 {
     public static class ServicesConfiguration
     {
-        public static void AddApplicationServices(this IServiceCollection services ) 
+        public static void AddApplicationServices(this IServiceCollection services)
         {
-            services.AddScoped<ICurrencyProvider1, CurrencyProvider1>();
+            services.AddSingleton<ICurrencyApiService, CurrencyApiService>();
         }
     }
 }
