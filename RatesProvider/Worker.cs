@@ -1,16 +1,22 @@
-﻿using RatesProvider.Application.Interfaces;
+﻿using RatesProvider.Application.Integrations;
+using RatesProvider.Application.Interfaces;
 
 
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
-    private readonly ICurrencyApiService _currencyProviderService;
-    private readonly string _baseCurrency = "USD"; //  базовую валюту
+    
+    private readonly ICurrencyRateManager _currencyRateManager;
 
-    public Worker(ILogger<Worker> logger, ICurrencyApiService currencyProviderService)
+
+
+
+    public Worker(ILogger<Worker> logger, ICurrencyRateManager currencyRateManager)
     {
         _logger = logger;
-        _currencyProviderService = currencyProviderService;
+        _currencyRateManager = currencyRateManager;
+   
+      
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -18,7 +24,7 @@ public class Worker : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             _logger.LogInformation("RatesProviderService running at: {time}", DateTimeOffset.Now);
-            await _currencyProviderService.GetCurrencyRateWithTypedClientAsync();
+            await _currencyRateManager.GetRatesAsync("USD");
             await Task.Delay(TimeSpan.FromMinutes(1));
         }
     }

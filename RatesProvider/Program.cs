@@ -27,8 +27,8 @@ builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
 
 
-builder.Services.AddHttpClient<CurrencyApiClient>();
-builder.Services.AddHttpClient<CurrencyLayerClient>();
+
+builder.Services.AddHttpClient<ExchengeratesClient>();
 builder.Services.AddHttpClient<FixerClient>();
 builder.Services.AddApplicationServices();
 
