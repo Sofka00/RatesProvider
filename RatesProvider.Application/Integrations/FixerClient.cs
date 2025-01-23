@@ -1,33 +1,45 @@
-﻿using RatesProvider.Application.Models.CurrencyApiModels;
+﻿using RatesProvider.Application.Models;
+using RatesProvider.Application.Models.FixerApiModels;
 using System.Text.Json;
 
 namespace RatesProvider.Application.Integrations
 {
-    public class FixerClient
+    public class FixerClient : ICurrencyRateProvider
     {
         private readonly HttpClient _client;
         private readonly JsonSerializerOptions _options;
+        private readonly string _apiKey = "d8997419331d2484d18e9fa0b9dede91";
 
         public FixerClient(HttpClient client)
         {
             _client = client;
-            _client.BaseAddress = new Uri("https://fixer.io/");
-            _client.Timeout = new TimeSpan(0, 0, 30);
+            _client.BaseAddress = new Uri("https://data.fixer.io/api/");
+            _client.Timeout = TimeSpan.FromSeconds(30);
             _client.DefaultRequestHeaders.Clear();
 
             _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         }
 
-        public async Task<List<CurrencyResponse>> GetCurrencyRatesAsync()
+        public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
         {
-            using (var response = await _client.GetAsync("FixerRates", HttpCompletionOption.ResponseHeadersRead))
+            var c = new HttpClient();
+            var m=await c.GetStringAsync("https://data.fixer.io/api/latest?access_key=d8997419331d2484d18e9fa0b9dede91&base=AUD&symbols=USD,AUD,CAD,PLN,MXN");
+            var url = $"latest?access_key=d8997419331d2484d18e9fa0b9dede91&base=USD&symbols=GBP,JPY,EUR";
+            using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+            var stream = await response.Content.ReadAsStreamAsync();
+            var exchangeRateResponse  = await JsonSerializer.DeserializeAsync<ExchangeRateResponse>(stream, _options);
+            var currencyRate = new CurrencyRateResponse
             {
-                response.EnsureSuccessStatusCode();
-                var stream = await response.Content.ReadAsStreamAsync();
-                var currency = await JsonSerializer.DeserializeAsync<List<CurrencyResponse>>(stream, _options);
-                return currency;
-            }
-        }
+                BaseCurrency = exchangeRateResponse.Base,
+                Rates = exchangeRateResponse.Rates,
+                Date = exchangeRateResponse.Date,
+                //t
+                
+            };
 
+            return currencyRate;
+
+        }
     }
 }
