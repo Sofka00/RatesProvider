@@ -1,6 +1,6 @@
 ﻿namespace RatesProvider.Application.Interfaces
 {
-    public interface ICurrencyApiService
+    public interface IExchangeratesService
     {
         Task Execute();
         Task GetCurrencyRateWithTypedClientAsync();
