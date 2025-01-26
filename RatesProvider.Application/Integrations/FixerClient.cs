@@ -34,7 +34,7 @@ namespace RatesProvider.Application.Integrations
                 BaseCurrency = exchangeRateResponse.Base,
                 Rates = exchangeRateResponse.Rates,
                 Date = exchangeRateResponse.Date,
-                //t
+                
                 
             };
 

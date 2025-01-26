@@ -15,11 +15,5 @@ namespace RatesProvider.Application.Models.FixerApiModels
         public DateTime Date { get; set; }            
         public Dictionary<string, decimal> Rates { get; set; } 
 
-        //// Метод для десериализации из JSON
-        //public static ExchangeRateResponse FromJson(string json)
-        //{
-        //    return JsonSerializer.Deserialize<ExchangeRateResponse>(json);
-        //}
-
     }
 }
