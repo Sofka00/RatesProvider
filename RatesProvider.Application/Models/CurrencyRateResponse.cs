@@ -8,7 +8,7 @@ namespace RatesProvider.Application.Models
 {
     public class CurrencyRateResponse
     {
-        public string BaseCurrency { get; set; } // базовая валюта из енама 
+        public Currences BaseCurrency { get; set; } // базовая валюта из енама 
         public Dictionary<string, decimal> Rates { get; set; }
         public DateTime Date { get; set; }
      

@@ -1,4 +1,5 @@
-﻿using RatesProvider.Application.Integrations;
+﻿using Microsoft.Extensions.DependencyInjection;
+using RatesProvider.Application.Integrations;
 using RatesProvider.Application.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace RatesProvider.Application.Services
     {
         private readonly ICurrencyRateProvider _fixerClient;
 
-        public FixerApiService(ICurrencyRateProvider fixerClient)
+        public FixerApiService([FromKeyedServices("Fixer")]  ICurrencyRateProvider fixerClient)
         {
             _fixerClient = fixerClient;
         }

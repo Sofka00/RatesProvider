@@ -24,7 +24,7 @@ public class Worker : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             _logger.LogInformation("RatesProviderService running at: {time}", DateTimeOffset.Now);
-            await _currencyRateManager.GetRatesAsync("USD");
+            await _currencyRateManager.GetRatesAsync();
             await Task.Delay(TimeSpan.FromMinutes(1));
         }
     }

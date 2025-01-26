@@ -22,20 +22,18 @@ namespace RatesProvider.Application.Integrations
 
         public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
         {
-            var c = new HttpClient();
-            var m=await c.GetStringAsync("https://data.fixer.io/api/latest?access_key=d8997419331d2484d18e9fa0b9dede91&base=AUD&symbols=USD,AUD,CAD,PLN,MXN");
-            var url = $"latest?access_key=d8997419331d2484d18e9fa0b9dede91&base=USD&symbols=GBP,JPY,EUR";
+            var url = $"latest?access_key={_apiKey}";
             using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
             var stream = await response.Content.ReadAsStreamAsync();
             var exchangeRateResponse  = await JsonSerializer.DeserializeAsync<ExchangeRateResponse>(stream, _options);
             var currencyRate = new CurrencyRateResponse
             {
-                BaseCurrency = exchangeRateResponse.Base,
+                BaseCurrency = Enum.Parse<Currences>(exchangeRateResponse.Base),
                 Rates = exchangeRateResponse.Rates,
                 Date = exchangeRateResponse.Date,
-                
-                
+
+
             };
 
             return currencyRate;

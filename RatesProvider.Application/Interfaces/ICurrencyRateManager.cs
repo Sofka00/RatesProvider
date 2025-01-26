@@ -4,6 +4,6 @@ namespace RatesProvider.Application.Interfaces
 {
     public interface ICurrencyRateManager
     {
-        Task<CurrencyRateResponse> GetRatesAsync(string baseCurrency);
+        Task<CurrencyRateResponse> GetRatesAsync();
     }
 }

@@ -31,7 +31,7 @@ namespace RatesProvider.Application.Integrations
             var currencyExchenge = await JsonSerializer.DeserializeAsync<ExchangeRateResponse>(stream, _options);
             var currencyRate = new CurrencyRateResponse
             {
-                BaseCurrency = currencyExchenge.Base,
+                BaseCurrency = Enum.Parse<Currences>(currencyExchenge.Base),
                 Rates = currencyExchenge.Rates,
                 Date = currencyExchenge.Date
             };
