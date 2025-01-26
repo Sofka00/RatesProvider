@@ -1,5 +1,7 @@
-﻿using RatesProvider.Application.Models;
+﻿using RatesProvider.Application.Interfaces;
+using RatesProvider.Application.Models;
 using RatesProvider.Application.Models.FixerApiModels;
+using System.Net;
 using System.Text.Json;
 
 namespace RatesProvider.Application.Integrations
@@ -24,6 +26,10 @@ namespace RatesProvider.Application.Integrations
         {
             var url = $"latest?access_key={_apiKey}";
             using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
             response.EnsureSuccessStatusCode();
             var stream = await response.Content.ReadAsStreamAsync();
             var exchangeRateResponse  = await JsonSerializer.DeserializeAsync<ExchangeRateResponse>(stream, _options);
@@ -36,7 +42,15 @@ namespace RatesProvider.Application.Integrations
 
             };
 
-            return currencyRate;
+            if (exchangeRateResponse != null)
+            {
+
+
+
+                return currencyRate;
+
+            }
+            return null;
 
         }
     }

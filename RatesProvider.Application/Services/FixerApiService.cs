@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using RatesProvider.Application.Integrations;
 using RatesProvider.Application.Interfaces;
 using System;
 using System.Collections.Generic;

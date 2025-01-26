@@ -1,6 +1,6 @@
 ﻿using RatesProvider.Application.Models;
 
-namespace RatesProvider.Application.Integrations
+namespace RatesProvider.Application.Interfaces
 {
     public interface ICurrencyRateProvider
     {

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using RatesProvider.Application.Integrations;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
 
@@ -20,36 +19,31 @@ namespace RatesProvider.Application.Services
         public async Task<CurrencyRateResponse> GetRatesAsync()
         {
 
-            int currentProviderIndex = 0;
-            CurrencyRateResponse rates = null;
-            int attemps = 0;
+            CurrencyRateResponse rateResponse = null;
 
-            do
+            TimeSpan interval = new TimeSpan(0, 0, 2);
+            for (int i = 0; i < 3; i++)
             {
-                if(currentProviderIndex == 0)
+                rateResponse = await _providerExhengerate.GetCurrencyRatesAsync();
+                if (rateResponse != null)
                 {
-                    rates = await _providerFixer.GetCurrencyRatesAsync();
+                    return rateResponse;
                 }
-                else
-                {
-                    rates = await _providerExhengerate.GetCurrencyRatesAsync();
-
-                }
-
-                if (currentProviderIndex ==0 && attemps>3 )
-                {
-                    currentProviderIndex = 1;
-                    attemps = 0;
-                }
-
-
-                currentProviderIndex++;
-
+                Thread.Sleep(interval * 2);
             }
-            while (rates == null || !rates.Rates.Any());
+            for (int i = 0; i < 3; i++)
+            {
+                rateResponse = await _providerFixer.GetCurrencyRatesAsync();
+                if (rateResponse != null)
+                {
 
+                    return rateResponse;
+                }
+                Thread.Sleep(interval * 2);
+            }
 
-            return rates;
+            return null;
+
         }
     }
 }
