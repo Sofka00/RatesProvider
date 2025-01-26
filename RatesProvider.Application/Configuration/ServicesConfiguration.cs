@@ -14,7 +14,7 @@ namespace RatesProvider.Application.Configuration
             services.AddSingleton<IFixerApiService, FixerApiService>();
             services.AddKeyedSingleton<ICurrencyRateProvider, FixerClient>("Fixer"); 
             services.AddKeyedSingleton<ICurrencyRateProvider,ExchengeratesClient >("Exchengerates");
-
+            
         }
     }
 }

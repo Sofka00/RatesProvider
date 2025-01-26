@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging.Configuration;
+﻿using Microsoft.Extensions.Logging.Configuration;
 using Microsoft.Extensions.Logging.EventLog;
 using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Integrations;
@@ -6,18 +6,31 @@ using RatesProvider.Application.Integrations;
 
 var builder = Host.CreateApplicationBuilder(args);
 
+Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
+
 builder.Services.AddWindowsService(options =>
 {
     options.ServiceName = "RatesProviderService";
 });
+builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+builder.Configuration.AddEnvironmentVariables();
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>();
+}
 
-builder.Configuration
-    .AddJsonFile("appsetings.json", optional: true, reloadOnChange: true)
-    .AddJsonFile($"appsetings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-    .AddJsonFile("appsetings.secrets.json", optional: true, reloadOnChange: true)
-    .AddCommandLine(args)
-    .AddEnvironmentVariables()
-    .Build();
+// Регистрация настроек ApiSettings
+builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
+Console.WriteLine(builder.Configuration.GetDebugView());
+
+
+//builder.Configuration
+//    .AddJsonFile("appsetings.json", optional: true, reloadOnChange: true)
+//    .AddJsonFile($"appsetings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+//    .AddJsonFile("appsetings.secrets.json", optional: true, reloadOnChange: true)
+//    .AddComma..ndLine(args)
+//    .AddEnvironmentVariables()
+//    .Build();
 
 var configuration = builder.Configuration;
 
