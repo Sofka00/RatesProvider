@@ -14,7 +14,7 @@ public class CurrencyApiService : ICurrencyApiService
         _currencyProviderClient = currencyProviderClient;
     }
 
-    public async Task Execute()
+    public async Task ExecuteAsync()
     {
         await GetCurrencyRateWithTypedClientAsync();
     }
