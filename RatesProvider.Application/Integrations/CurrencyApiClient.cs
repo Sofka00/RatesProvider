@@ -1,9 +1,11 @@
-﻿using RatesProvider.Application.Models.CurrencyApiModels;
+﻿using RatesProvider.Application.Interfaces;
+using RatesProvider.Application.Models;
+using RatesProvider.Application.Models.OpenExchangeRatesModels;
 using System.Text.Json;
 
 namespace RatesProvider.Application.Integrations;
 
-public class CurrencyApiClient
+public class CurrencyApiClient : ICurrencyRateProvider
 {
     private readonly HttpClient _client;
     private readonly JsonSerializerOptions _options;
@@ -19,14 +21,22 @@ public class CurrencyApiClient
         _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
     }
 
-    public async Task <CurrencyResponse> GetCurrencyRatesAsync()
+    public async Task<CurrencyRate> GetCurrencyRatesAsync()
     {
         using (var response = await _client.GetAsync(_apiKey, HttpCompletionOption.ResponseHeadersRead))
         {
             response.EnsureSuccessStatusCode();
             var stream = await response.Content.ReadAsStreamAsync();
-            var currency = await JsonSerializer.DeserializeAsync<CurrencyResponse>(stream, _options);
-            return currency;
+            var currency = await JsonSerializer.DeserializeAsync<ResponseModel>(stream, _options);
+            var currencyRate = new CurrencyRate
+            {
+                BaseCurrency = currency.Base,
+                Rates = currency.Rates,
+                Date = currency.Date
+
+            };
+
+            return currencyRate;
         }
     }
 }

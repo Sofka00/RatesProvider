@@ -26,12 +26,7 @@ builder.Services.AddHostedService<Worker>();
 builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
 
-
-builder.Services.AddHttpClient<CurrencyApiClient>();
-builder.Services.AddHttpClient<CurrencyLayerClient>();
-builder.Services.AddHttpClient<FixerClient>();
 builder.Services.AddApplicationServices();
-
 
 var host = builder.Build(); 
 host.Run();
