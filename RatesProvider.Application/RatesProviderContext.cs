@@ -1,0 +1,21 @@
+﻿using RatesProvider.Application.Interfaces;
+
+namespace RatesProvider.Application
+{
+    public class RatesProviderContext : IRatesProviderContext
+    {
+        private ICurrencyRateProvider _currencyRateProvider;
+
+        public RatesProviderContext(ICurrencyRateProvider currencyRateProvider)
+        {
+            _currencyRateProvider = currencyRateProvider;
+        }
+
+        public void SetCurrencyRate(ICurrencyRateProvider currencyRateProvider)
+        {
+            _currencyRateProvider = currencyRateProvider;
+        }
+
+        public async Task GetRatesAsync() => await _currencyRateProvider.GetCurrencyRatesAsync();
+    }
+}
