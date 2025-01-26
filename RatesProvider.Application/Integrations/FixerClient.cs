@@ -1,4 +1,6 @@
-﻿using RatesProvider.Application.Interfaces;
+﻿using Microsoft.Extensions.Options;
+using RatesProvider.Application.Configuration;
+using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
 using RatesProvider.Application.Models.FixerApiModels;
 using System.Net;
@@ -10,21 +12,23 @@ namespace RatesProvider.Application.Integrations
     {
         private readonly HttpClient _client;
         private readonly JsonSerializerOptions _options;
-        private readonly string _apiKey = "d8997419331d2484d18e9fa0b9dede91";
+        private readonly ApiSettings _apiSettings;
 
-        public FixerClient(HttpClient client)
+
+        public FixerClient(HttpClient client, IOptions<ApiSettings> apiSettings)
         {
             _client = client;
             _client.BaseAddress = new Uri("https://data.fixer.io/api/");
             _client.Timeout = TimeSpan.FromSeconds(30);
             _client.DefaultRequestHeaders.Clear();
+            _apiSettings = apiSettings.Value;
 
             _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         }
 
         public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
         {
-            var url = $"latest?access_key={_apiKey}";
+            var url = $"latest?access_key={_apiSettings.FixerApiKey}";
             using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
             if (response.StatusCode != HttpStatusCode.OK)
             {

@@ -13,7 +13,6 @@ namespace RatesProvider.Application.Integrations
     {
         private readonly HttpClient _client;
         private readonly JsonSerializerOptions _options;
-        /*   private readonly string _apiKey = "5b770aba259d9fa84d4eae92140ada35"*//*;*/
         private readonly ApiSettings _apiSettings;
 
 
