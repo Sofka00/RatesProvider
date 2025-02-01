@@ -1,4 +1,5 @@
 ﻿using RatesProvider.Application.Interfaces;
+using RatesProvider.Application.Models;
 
 namespace RatesProvider.Application
 {
@@ -19,9 +20,21 @@ namespace RatesProvider.Application
             _currencyRateProvider = currencyRateProvider;
         }
 
-        public void Execute()
+        public async Task<CurrencyRateResponse> Execute()
         {
-            _currencyRateProvider.GetCurrencyRatesAsync();
+            CurrencyRateResponse response = null;
+            
+            for (int i = 0; i < 3; i++)
+            {
+                response = await _currencyRateProvider.GetCurrencyRatesAsync();
+                
+                if (response != null) 
+                {
+                    return response;
+                }
+            }
+            return null;
+            //_currencyRateProvider.GetCurrencyRatesAsync();
         }
     }
 }

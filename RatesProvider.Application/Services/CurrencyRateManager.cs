@@ -16,34 +16,33 @@ public class CurrencyRateManager : ICurrencyRateManager
         _httpclient = httpclient;
     }
 
-    public async Task<CurrencyRateResponse> GetRatesAsync(HttpClient httpclient)
+    public async Task<CurrencyRateResponse> GetRatesAsync()
     {
         var context = new RatesProviderContext();
         //context.SetCurrencyRate(new CurrencyApiClient(httpclient));
         //context.SetCurrencyRate(new FixerClient(httpclient));
         //context.SetCurrencyRate(new OpenExchangeRatesClient(httpclient));
         //context.Execute();
+        var providerChoise = 1;
+        
 
-       
-
-        switch (model)
+        switch (providerChoise)
         {
             case 1:
-                context.SetCurrencyRate(new CurrencyApiClient(httpclient));
-                //for (int i = 0; i < length; i++)
-                //{
-
-                //}
+                context.SetCurrencyRate(new CurrencyApiClient(_httpclient));
                 break;
             case 2:
-                context.SetCurrencyRate(new FixerClient(httpclient));
+                context.SetCurrencyRate(new OpenExchangeRatesClient(_httpclient));
                 break;
             case 3:
-                context.SetCurrencyRate(new OpenExchangeRatesClient(httpclient));
+                context.SetCurrencyRate(new FixerClient(_httpclient));
                 break;
+            default:
+                return null;
         }
-        context.Execute();
-        
-        return null;
+
+        var response = await context.Execute();
+
+        return response;
     }
 }

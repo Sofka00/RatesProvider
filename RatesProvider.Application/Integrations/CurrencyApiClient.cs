@@ -1,6 +1,7 @@
 ﻿using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
 using RatesProvider.Application.Models.OpenExchangeRatesModels;
+using System.Net;
 using System.Text.Json;
 
 namespace RatesProvider.Application.Integrations;
@@ -25,7 +26,12 @@ public class CurrencyApiClient : ICurrencyRateProvider
     {
         using (var response = await _client.GetAsync(_apiKey, HttpCompletionOption.ResponseHeadersRead))
         {
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
             response.EnsureSuccessStatusCode();
+           
             var stream = await response.Content.ReadAsStreamAsync();
             var currency = await JsonSerializer.DeserializeAsync<OpenExchangeRatesResponseModel>(stream, _options);
             var currencyRateResponse = new CurrencyRateResponse
@@ -36,7 +42,16 @@ public class CurrencyApiClient : ICurrencyRateProvider
 
             };
 
-            return currencyRateResponse;
+            if (currencyRateResponse != null)
+            {
+
+
+
+                return currencyRateResponse;
+
+            }
+            
+            return null;
         }
     }
 }
