@@ -1,17 +1,15 @@
 ﻿using RatesProvider.Application.Integrations;
 using RatesProvider.Application.Interfaces;
 
-
-
 namespace RatesProvider.Application.Services;
 
 public class CurrencyApiService : ICurrencyApiService
 {
-    private readonly CurrencyApiClient _currencyProviderClient;
+    private CurrencyApiClient _currencyApiClient;
 
-    public CurrencyApiService(CurrencyApiClient currencyProviderClient)
+    public CurrencyApiService(CurrencyApiClient currencyApiClient)
     {
-        _currencyProviderClient = currencyProviderClient;
+        _currencyApiClient = currencyApiClient;
     }
 
     public async Task ExecuteAsync()
@@ -19,5 +17,5 @@ public class CurrencyApiService : ICurrencyApiService
         await GetCurrencyRateWithTypedClientAsync();
     }
 
-    public async Task GetCurrencyRateWithTypedClientAsync() => await _currencyProviderClient.GetCurrencyRatesAsync();
+    public async Task GetCurrencyRateWithTypedClientAsync() => await _currencyApiClient.GetCurrencyRatesAsync();
 }

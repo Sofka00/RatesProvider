@@ -5,11 +5,11 @@ namespace RatesProvider.Application.Services
 {
     public class OpenExchangeRatesService : IOpenExchangeRatesService
     {
-        private readonly OpenExchangeRatesClient _openExchangeRatesClient;
+        private OpenExchangeRatesClient _openExchangeRatesClient;
 
-        public OpenExchangeRatesService(OpenExchangeRatesClient openExchangeRatesClientClient)
+        public OpenExchangeRatesService(OpenExchangeRatesClient openExchangeRatesClient)
         {
-            _openExchangeRatesClient = openExchangeRatesClientClient;
+            _openExchangeRatesClient = openExchangeRatesClient;
         }
 
         public async Task ExecuteAsync()

@@ -7,7 +7,7 @@ namespace RatesProvider.Application.Integrations;
 
 public class CurrencyApiClient : ICurrencyRateProvider
 {
-    private readonly HttpClient _client;
+    private HttpClient _client;
     private readonly JsonSerializerOptions _options;
     private readonly string _apiKey = "https://api.currencyapi.com/v3/latest?apikey=cur_live_IiK9hxawHQROFiX3rUYiEMzPzQ6oa12EmOqDrSiN&currencies=EUR%2CUSD%2CCAD";
 
@@ -21,14 +21,14 @@ public class CurrencyApiClient : ICurrencyRateProvider
         _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
     }
 
-    public async Task<CurrencyRate> GetCurrencyRatesAsync()
+    public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
     {
         using (var response = await _client.GetAsync(_apiKey, HttpCompletionOption.ResponseHeadersRead))
         {
             response.EnsureSuccessStatusCode();
             var stream = await response.Content.ReadAsStreamAsync();
-            var currency = await JsonSerializer.DeserializeAsync<ResponseModel>(stream, _options);
-            var currencyRate = new CurrencyRate
+            var currency = await JsonSerializer.DeserializeAsync<OpenExchangeRatesResponseModel>(stream, _options);
+            var currencyRateResponse = new CurrencyRateResponse
             {
                 BaseCurrency = currency.Base,
                 Rates = currency.Rates,
@@ -36,7 +36,7 @@ public class CurrencyApiClient : ICurrencyRateProvider
 
             };
 
-            return currencyRate;
+            return currencyRateResponse;
         }
     }
 }
