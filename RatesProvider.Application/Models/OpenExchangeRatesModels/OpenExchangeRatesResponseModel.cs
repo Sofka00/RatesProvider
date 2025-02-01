@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RatesProvider.Application.Models.OpenExchangeRatesModels
 {
-    public class ResponseModel
+    public class OpenExchangeRatesResponseModel
     {
         public long Timestamp { get; set; }
         public string Base { get; set; }

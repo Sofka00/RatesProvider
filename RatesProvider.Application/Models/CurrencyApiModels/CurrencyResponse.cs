@@ -1,13 +1,12 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace RatesProvider.Application.Models.CurrencyApiModels
-{
-    public class CurrencyResponse
-    {
-        [JsonPropertyName("meta")]
-        public Meta Meta { get; set; }
+namespace RatesProvider.Application.Models.CurrencyApiModels;
 
-        [JsonPropertyName("data")]
-        public Data Data { get; set; }
-    }
+public class CurrencyResponse
+{
+    [JsonPropertyName("meta")]
+    public Meta Meta { get; set; }
+
+    [JsonPropertyName("data")]
+    public Data Data { get; set; }
 }
