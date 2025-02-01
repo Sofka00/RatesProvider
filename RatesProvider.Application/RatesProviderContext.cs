@@ -4,7 +4,10 @@ namespace RatesProvider.Application
 {
     public class RatesProviderContext : IRatesProviderContext
     {
-        private ICurrencyRateProvider _currencyRateProvider;
+        public ICurrencyRateProvider _currencyRateProvider;
+
+        public RatesProviderContext()
+        { }
 
         public RatesProviderContext(ICurrencyRateProvider currencyRateProvider)
         {
@@ -16,6 +19,9 @@ namespace RatesProvider.Application
             _currencyRateProvider = currencyRateProvider;
         }
 
-        public async Task GetRatesAsync() => await _currencyRateProvider.GetCurrencyRatesAsync();
+        public void Execute()
+        {
+            _currencyRateProvider.GetCurrencyRatesAsync();
+        }
     }
 }

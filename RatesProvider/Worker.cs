@@ -23,6 +23,8 @@ public class Worker : BackgroundService
         {
             _logger.LogInformation("RatesProviderService running at: {time}", DateTimeOffset.Now);
             await _openExchangeRatesService.GetCurrencyRateWithTypedClientAsync();
+
+
             await Task.Delay(TimeSpan.FromMinutes(1));
         }
     }

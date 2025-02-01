@@ -11,7 +11,14 @@ namespace RatesProvider.Application.Configuration
         {
             services.AddSingleton<ICurrencyApiService, CurrencyApiService>();
             services.AddSingleton<IOpenExchangeRatesService, OpenExchangeRatesService>();
+
+            services.AddSingleton<ICurrencyRateProvider, OpenExchangeRatesClient>();
+            services.AddSingleton<ICurrencyRateProvider, CurrencyApiClient>();
+            services.AddSingleton<ICurrencyRateProvider, FixerClient>();
+
+            services.AddSingleton<ICurrencyRateManager, CurrencyRateManager>();
             services.AddSingleton<IRatesProviderContext, RatesProviderContext>();
+
             // разное
             services.AddHttpClient<CurrencyApiClient>();
             services.AddHttpClient<OpenExchangeRatesClient>();

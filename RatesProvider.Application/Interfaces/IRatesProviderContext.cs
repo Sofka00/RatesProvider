@@ -2,7 +2,7 @@
 {
     public interface IRatesProviderContext
     {
-        Task GetRatesAsync();
+        void Execute();
         void SetCurrencyRate(ICurrencyRateProvider currencyRateProvider);
     }
 }
