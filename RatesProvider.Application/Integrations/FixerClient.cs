@@ -24,11 +24,11 @@ namespace RatesProvider.Application.Integrations
         public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
         {
             using var response = await _client.GetAsync(_apiKey, HttpCompletionOption.ResponseHeadersRead);
-            
-                response.EnsureSuccessStatusCode();
-                var stream = await response.Content.ReadAsStreamAsync();
-                var currency = await JsonSerializer.DeserializeAsync<FixerResponseModel>(stream, _options);
-            
+
+            response.EnsureSuccessStatusCode();
+            var stream = await response.Content.ReadAsStreamAsync();
+            var currency = await JsonSerializer.DeserializeAsync<FixerResponseModel>(stream, _options);
+
             var currencyRateResponse = new CurrencyRateResponse
             {
                 BaseCurrency = currency.Base,
@@ -36,8 +36,8 @@ namespace RatesProvider.Application.Integrations
                 Date = currency.Date
 
             };
+
             return currencyRateResponse;
-            
         }
     }
 }

@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging.Configuration;
 using Microsoft.Extensions.Logging.EventLog;
 using RatesProvider.Application.Configuration;
-using RatesProvider.Application.Integrations;
 
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -28,5 +27,5 @@ builder.Logging.AddConfiguration(
 
 builder.Services.AddApplicationServices();
 
-var host = builder.Build(); 
+var host = builder.Build();
 host.Run();

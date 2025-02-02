@@ -4,8 +4,6 @@
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
-    private readonly ICurrencyApiService _currencyApiService;
-    private readonly IOpenExchangeRatesService _openExchangeRatesService;
     private readonly ICurrencyRateManager _currencyRateManager;
     private readonly string _baseCurrency = "USD"; //  базовую валюту
 
@@ -14,7 +12,6 @@ public class Worker : BackgroundService
         ICurrencyRateManager currencyRateManager)
     {
         _logger = logger;
-        _openExchangeRatesService = openExchangeRatesService;
         _currencyRateManager = currencyRateManager;
     }
 
@@ -23,7 +20,6 @@ public class Worker : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             _logger.LogInformation("RatesProviderService running at: {time}", DateTimeOffset.Now);
-            //await _openExchangeRatesService.GetCurrencyRateWithTypedClientAsync();
             await _currencyRateManager.GetRatesAsync();
 
             await Task.Delay(TimeSpan.FromSeconds(10));

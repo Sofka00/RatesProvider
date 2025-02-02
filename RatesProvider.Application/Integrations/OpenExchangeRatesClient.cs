@@ -1,4 +1,5 @@
-﻿using RatesProvider.Application.Interfaces;
+﻿using Polly.Retry;
+using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
 using RatesProvider.Application.Models.OpenExchangeRatesModels;
 using System.Text.Json;

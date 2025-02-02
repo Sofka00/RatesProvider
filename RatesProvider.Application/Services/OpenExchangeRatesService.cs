@@ -5,7 +5,7 @@ namespace RatesProvider.Application.Services
 {
     public class OpenExchangeRatesService : IOpenExchangeRatesService
     {
-        private OpenExchangeRatesClient _openExchangeRatesClient;
+        private readonly OpenExchangeRatesClient _openExchangeRatesClient;
 
         public OpenExchangeRatesService(OpenExchangeRatesClient openExchangeRatesClient)
         {

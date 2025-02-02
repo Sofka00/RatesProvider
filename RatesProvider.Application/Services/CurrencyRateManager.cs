@@ -9,7 +9,6 @@ public class CurrencyRateManager : ICurrencyRateManager
     private IRatesProviderContext _ratesProviderContext;
     private readonly HttpClient _httpclient;
 
-
     public CurrencyRateManager(IRatesProviderContext ratesProviderContext, HttpClient httpclient)
     {
         _ratesProviderContext = ratesProviderContext;
@@ -18,31 +17,30 @@ public class CurrencyRateManager : ICurrencyRateManager
 
     public async Task<CurrencyRateResponse> GetRatesAsync()
     {
-        var context = new RatesProviderContext();
-        //context.SetCurrencyRate(new CurrencyApiClient(httpclient));
-        //context.SetCurrencyRate(new FixerClient(httpclient));
-        //context.SetCurrencyRate(new OpenExchangeRatesClient(httpclient));
-        //context.Execute();
-        var providerChoise = 1;
-        
-
-        switch (providerChoise)
+        for (int i = 1; i < 4; i++)
         {
-            case 1:
-                context.SetCurrencyRate(new CurrencyApiClient(_httpclient));
-                break;
-            case 2:
-                context.SetCurrencyRate(new OpenExchangeRatesClient(_httpclient));
-                break;
-            case 3:
-                context.SetCurrencyRate(new FixerClient(_httpclient));
-                break;
-            default:
-                return null;
+            var context = new RatesProviderContext();
+
+            var providerChoise = i;
+
+            switch (providerChoise)
+            {
+                case 1:
+                    context.SetCurrencyRate(new CurrencyApiClient(_httpclient));
+                    break;
+                case 2:
+                    context.SetCurrencyRate(new OpenExchangeRatesClient(_httpclient));
+                    break;
+                case 3:
+                    context.SetCurrencyRate(new FixerClient(_httpclient));
+                    break;
+                default:
+                    return null;
+            }
+
+            await context.Execute();
         }
 
-        var response = await context.Execute();
-
-        return response;
+        return null;
     }
 }
