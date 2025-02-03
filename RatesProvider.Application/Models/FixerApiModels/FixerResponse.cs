@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RatesProvider.Application.Models.FixerApiModels
 {
-    public class ExchangeRateResponse
+    public class FixerResponse
     {
         public bool Success { get; set; }             
         public long Timestamp { get; set; }            

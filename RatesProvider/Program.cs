@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging.Configuration;
 using Microsoft.Extensions.Logging.EventLog;
+using RatesProvider.Application;
 using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Integrations;
 
@@ -23,26 +24,12 @@ if (builder.Environment.IsDevelopment())
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
 Console.WriteLine(builder.Configuration.GetDebugView());
 
-
-//builder.Configuration
-//    .AddJsonFile("appsetings.json", optional: true, reloadOnChange: true)
-//    .AddJsonFile($"appsetings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-//    .AddJsonFile("appsetings.secrets.json", optional: true, reloadOnChange: true)
-//    .AddComma..ndLine(args)
-//    .AddEnvironmentVariables()
-//    .Build();
-
 var configuration = builder.Configuration;
 
 LoggerProviderOptions.RegisterProviderOptions<EventLogSettings, EventLogLoggerProvider>(builder.Services);
 builder.Services.AddHostedService<Worker>();
 builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
-
-
-
-builder.Services.AddHttpClient<ExchengeratesClient>();
-builder.Services.AddHttpClient<FixerClient>();
 builder.Services.AddApplicationServices();
 
 

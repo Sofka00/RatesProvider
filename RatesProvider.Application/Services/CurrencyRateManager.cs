@@ -7,43 +7,26 @@ namespace RatesProvider.Application.Services
     public class CurrencyRateManager : ICurrencyRateManager
     {
         private readonly ICurrencyRateProvider _providerFixer;
-        private readonly ICurrencyRateProvider _providerExhengerate;
-        private IFixerApiService _fixerApiService;
+        private IRatesProviderContext _context;
 
-        public CurrencyRateManager([FromKeyedServices("Fixer")] ICurrencyRateProvider providerFixer, [FromKeyedServices("Exchengerates")] ICurrencyRateProvider providerExhengerate)
+        public CurrencyRateManager(IRatesProviderContext context, [FromKeyedServices("Fixer")] ICurrencyRateProvider providerFixer)
         {
+            _context = context;
             _providerFixer = providerFixer;
-            _providerExhengerate = providerExhengerate;
+
         }
 
         public async Task<CurrencyRateResponse> GetRatesAsync()
         {
+            CurrencyRateResponse result = default;
 
-            CurrencyRateResponse rateResponse = null;
+            _context.SetCurrencyRatesProvider(_providerFixer);
 
-            TimeSpan interval = new TimeSpan(0, 0, 2);
-            for (int i = 0; i < 3; i++)
-            {
-                rateResponse = await _providerExhengerate.GetCurrencyRatesAsync();
-                if (rateResponse != null)
-                {
-                    return rateResponse;
-                }
-                Thread.Sleep(interval * 2);
-            }
-            for (int i = 0; i < 3; i++)
-            {
-                rateResponse = await _providerFixer.GetCurrencyRatesAsync();
-                if (rateResponse != null)
-                {
+            result = await _context.GetRatesAsync();
 
-                    return rateResponse;
-                }
-                Thread.Sleep(interval * 2);
-            }
-
-            return null;
-
+            return result;
         }
+
+
     }
 }
