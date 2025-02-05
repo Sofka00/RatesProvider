@@ -7,9 +7,7 @@ public class Worker : BackgroundService
     private readonly ICurrencyRateManager _currencyRateManager;
     private readonly string _baseCurrency = "USD"; //  базовую валюту
 
-    public Worker(ILogger<Worker> logger,
-        IOpenExchangeRatesService openExchangeRatesService,
-        ICurrencyRateManager currencyRateManager)
+    public Worker(ILogger<Worker> logger, ICurrencyRateManager currencyRateManager)
     {
         _logger = logger;
         _currencyRateManager = currencyRateManager;

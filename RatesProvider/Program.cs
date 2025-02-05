@@ -26,6 +26,7 @@ builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
 
 builder.Services.AddApplicationServices();
+//builder.Services.Configure<AppSettings>(builder.Configuration);
 
 var host = builder.Build();
 host.Run();
