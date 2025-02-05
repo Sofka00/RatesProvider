@@ -1,43 +1,35 @@
-﻿using Polly.Retry;
+﻿using Microsoft.Extensions.Options;
+using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
 using RatesProvider.Application.Models.OpenExchangeRatesModels;
-using System.Text.Json;
 
-namespace RatesProvider.Application.Integrations
+namespace RatesProvider.Application.Integrations;
+
+public class OpenExchangeRatesClient : ICurrencyRateProvider
 {
-    public class OpenExchangeRatesClient : ICurrencyRateProvider
+    private readonly AppSettings _appSettings;
+    private readonly ICommonHttpClient _commonHttpClient;
+
+    public OpenExchangeRatesClient(IOptions<AppSettings> appSettings, ICommonHttpClient ratesProviderHttpRequest)
     {
-        private HttpClient _client;
-        private readonly JsonSerializerOptions _options;
-        private readonly string _apiKey = "latest.json?app_id=0fecdffcab43483b9df15a4ef3bd99d9";
 
-        public OpenExchangeRatesClient(HttpClient client)
+        _appSettings = appSettings.Value;
+        _commonHttpClient = ratesProviderHttpRequest;
+    }
+
+    public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
+    {
+        var url = $"https://openexchangerates.org/api/latest.json?app_id={_appSettings.OpenExchangeRatesApiKey}";
+        var response = await _commonHttpClient.SendRequestAsync<OpenExchangeRatesResponse>(url);
+
+        var currencyRate = new CurrencyRateResponse
         {
-            _client = client;
-            _client.BaseAddress = new Uri("https://openexchangerates.org/api/");
-            _client.Timeout = new TimeSpan(0, 0, 30);
-            _client.DefaultRequestHeaders.Clear();
+            BaseCurrency = Enum.Parse<Currencies>(response.Base),
+            Rates = response.Rates,
+            Date = response.Date,
+        };
 
-            _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        }
-
-        public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
-        {
-            using var response = await _client.GetAsync(_apiKey, HttpCompletionOption.ResponseHeadersRead);
-
-            response.EnsureSuccessStatusCode();
-            var stream = await response.Content.ReadAsStreamAsync();
-            var currency = await JsonSerializer.DeserializeAsync<OpenExchangeRatesResponseModel>(stream, _options);
-            var currencyRateResponse = new CurrencyRateResponse
-            {
-                BaseCurrency = currency.Base,
-                Rates = currency.Rates,
-                Date = currency.Date
-
-            };
-
-            return currencyRateResponse;
-        }
+        return currencyRate;
     }
 }

@@ -1,4 +1,4 @@
-﻿using RatesProvider.Application.Integrations;
+﻿using Microsoft.Extensions.DependencyInjection;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
 
@@ -6,41 +6,27 @@ namespace RatesProvider.Application.Services;
 
 public class CurrencyRateManager : ICurrencyRateManager
 {
-    private IRatesProviderContext _ratesProviderContext;
-    private readonly HttpClient _httpclient;
+    private readonly ICurrencyRateProvider _providerCurrencyApi;
+    private readonly ICurrencyRateProvider _providerOpenExchangeRates;
+    private IRatesProviderContext _context;
 
-    public CurrencyRateManager(IRatesProviderContext ratesProviderContext, HttpClient httpclient)
+    public CurrencyRateManager(IRatesProviderContext context,
+        [FromKeyedServices("CurrencyApi")] ICurrencyRateProvider providerCurrencyApi,
+        [FromKeyedServices("OpenExchangeRates")] ICurrencyRateProvider providerOpenExchangeRates)
     {
-        _ratesProviderContext = ratesProviderContext;
-        _httpclient = httpclient;
+        _context = context;
+        _providerCurrencyApi = providerCurrencyApi;
+        _providerOpenExchangeRates = providerOpenExchangeRates;
     }
 
     public async Task<CurrencyRateResponse> GetRatesAsync()
     {
-        for (int i = 1; i < 4; i++)
-        {
-            var context = new RatesProviderContext();
+        CurrencyRateResponse result = default;
 
-            var providerChoise = i;
+        _context.SetCurrencyRatesProvider(_providerCurrencyApi);
 
-            switch (providerChoise)
-            {
-                case 1:
-                    context.SetCurrencyRate(new CurrencyApiClient(_httpclient));
-                    break;
-                case 2:
-                    context.SetCurrencyRate(new OpenExchangeRatesClient(_httpclient));
-                    break;
-                case 3:
-                    context.SetCurrencyRate(new FixerClient(_httpclient));
-                    break;
-                default:
-                    return null;
-            }
-
-            await context.Execute();
-        }
-
-        return null;
+        result = await _context.GetRatesAsync();
+       
+        return result;
     }
 }

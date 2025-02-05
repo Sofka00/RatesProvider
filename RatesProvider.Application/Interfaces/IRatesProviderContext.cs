@@ -4,7 +4,7 @@ namespace RatesProvider.Application.Interfaces
 {
     public interface IRatesProviderContext
     {
-        Task Execute();
-        void SetCurrencyRate(ICurrencyRateProvider currencyRateProvider);
+        Task<CurrencyRateResponse> GetRatesAsync();
+        void SetCurrencyRatesProvider(ICurrencyRateProvider currencyRateProvider);
     }
 }

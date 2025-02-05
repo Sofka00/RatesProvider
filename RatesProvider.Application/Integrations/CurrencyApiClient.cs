@@ -1,53 +1,34 @@
-﻿using RatesProvider.Application.Interfaces;
+﻿using Microsoft.Extensions.Options;
+using RatesProvider.Application.Configuration;
+using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
-using RatesProvider.Application.Models.OpenExchangeRatesModels;
-using System.Text.Json;
+using RatesProvider.Application.Models.CurrencyApiModels;
 
 namespace RatesProvider.Application.Integrations;
 
 public class CurrencyApiClient : ICurrencyRateProvider
 {
-    private HttpClient _client;
-    private readonly JsonSerializerOptions _options;
-    private readonly string _apiKey = "https://api.currencyapi.com/v3/latest?apikey=cur_live_IiK9hxawHQROFiX3rUYiEMzPzQ6oa12EmOqDrSiN&currencies=EUR%2CUSD%2CCAD";
+    private readonly AppSettings _appSettings;
+    private readonly ICommonHttpClient _commonHttpClient;
 
-    public CurrencyApiClient(HttpClient client)
+    public CurrencyApiClient(IOptions<AppSettings> appSettings, ICommonHttpClient ratesProviderHttpRequest)
     {
-        _client = client;
-        _client.BaseAddress = new Uri("https://currencyapi.com/");
-        _client.Timeout = new TimeSpan(0, 0, 30);
-        _client.DefaultRequestHeaders.Clear();
-
-        _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        _appSettings = appSettings.Value;
+        _commonHttpClient = ratesProviderHttpRequest;
     }
 
     public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
     {
-        using var response = await _client.GetAsync(_apiKey, HttpCompletionOption.ResponseHeadersRead);
+        var url = $"https://api.currencyapi.com/v3/latest?apikey={_appSettings.CurrencyApiKey}";
+        var response = await _commonHttpClient.SendRequestAsync<CurrencyResponse>(url);
 
-        response.EnsureSuccessStatusCode();
-        var stream = await response.Content.ReadAsStreamAsync();
-        var currency = await JsonSerializer.DeserializeAsync<OpenExchangeRatesResponseModel>(stream, _options);
-        var currencyRateResponse = new CurrencyRateResponse
+        var currencyRate = new CurrencyRateResponse
         {
-            BaseCurrency = currency.Base,
-            Rates = currency.Rates,
-            Date = currency.Date
+            BaseCurrency = Enum.Parse<Currencies>(response.Data.ToString()),
+            Rates = response.CurrencyValue(),
+            Date = DateTime.Parse(response.Meta.ToString())
         };
 
-        return currencyRateResponse;
+        return currencyRate;
     }
 }
-
-//if (currencyRateResponse != null)
-//{
-
-//    return currencyRateResponse;
-
-//}
-
-//if (response.StatusCode != HttpStatusCode.OK)
-//{
-//    return null;
-//}
-//response.EnsureSuccessStatusCode();
