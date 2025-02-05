@@ -1,8 +1,7 @@
-﻿namespace RatesProvider.Application.Models.FixerModels;
+﻿namespace RatesProvider.Application.Models.OpenExchangeRatesModels;
 
-public class FixerResponseModel
+public class OpenExchangeRatesResponse
 {
-    public bool Success { get; set; }
     public long Timestamp { get; set; }
     public string Base { get; set; }
     public DateTime Date { get; set; }

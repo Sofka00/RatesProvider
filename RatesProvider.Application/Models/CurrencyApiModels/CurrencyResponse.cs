@@ -9,4 +9,7 @@ public class CurrencyResponse
 
     [JsonPropertyName("data")]
     public Data Data { get; set; }
+
+    [JsonPropertyName("CurrencyValue")]
+    public CurrencyValue CurrencyValue { get; set; }
 }

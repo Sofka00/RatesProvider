@@ -1,4 +1,4 @@
-﻿namespace RatesProvider.Application;
+﻿namespace RatesProvider.Application.Models;
 
 public enum Currencies
 {
