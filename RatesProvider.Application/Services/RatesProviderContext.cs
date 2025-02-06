@@ -1,38 +1,43 @@
-﻿using RatesProvider.Application.Interfaces;
+using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
 
-namespace RatesProvider.Application.Services;
-
-public class RatesProviderContext : IRatesProviderContext
+namespace RatesProvider.Application.Services
 {
-    private ICurrencyRateProvider _currencyRateProvider;
-
-    public RatesProviderContext()
+    public class RatesProviderContext : IRatesProviderContext
     {
-        _currencyRateProvider = null;
-    }
+        private ICurrencyRateProvider _currencyRateProvider;
 
-    public void SetCurrencyRatesProvider(ICurrencyRateProvider currencyRateProvider)
-    {
-        _currencyRateProvider = currencyRateProvider;
-    }
-
-    public async Task<CurrencyRateResponse> GetRatesAsync()
-    {
-        CurrencyRateResponse response = default;
-        TimeSpan interval = new TimeSpan(0, 0, 2);
-
-        for (int i = 0; i < 3; i++)
+        public RatesProviderContext()
         {
-            try
-            {
-                response = await _currencyRateProvider.GetCurrencyRatesAsync();
-            }
-            catch
-            {
-                await Task.Delay(interval * i);
-            }
+            _currencyRateProvider = null;
         }
-        return response;
+
+        public void SetCurrencyRatesProvider(ICurrencyRateProvider currencyRateProvider)
+        {
+            _currencyRateProvider = currencyRateProvider;
+        }
+
+        public async Task<CurrencyRateResponse> GetRatesAsync()
+        {
+            CurrencyRateResponse response = default;
+            TimeSpan interval = new TimeSpan(0, 0, 2);
+
+            for (int i = 0; i < 3; i++)
+            {
+                try
+                {
+                    response = await _currencyRateProvider.GetCurrencyRatesAsync();
+
+                }
+                catch
+                {
+                    await Task.Delay(interval * i);
+
+                }
+
+            }
+            return response;
+        }
+
     }
 }

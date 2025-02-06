@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
 
