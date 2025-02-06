@@ -1,4 +1,5 @@
-﻿using RatesProvider.Application.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using RatesProvider.Application.Interfaces;
 using System.Text.Json;
 
 namespace RatesProvider.Application.Integrations
@@ -6,11 +7,12 @@ namespace RatesProvider.Application.Integrations
     public class CommonHttpClient : ICommonHttpClient
     {
         private readonly HttpClient _client;
+        private readonly ILogger<CommonHttpClient> _logger;
 
-
-        public CommonHttpClient(HttpClient client)
+        public CommonHttpClient(HttpClient client, ILogger<CommonHttpClient> logger)
         {
             _client = client;
+            _logger = logger;
 
         }
 
@@ -20,16 +22,23 @@ namespace RatesProvider.Application.Integrations
             TimeSpan interval = new TimeSpan(0, 0, 2);
             try
             {
-
+                _logger.LogInformation("Sending GET request to URL: {Url}", url);
                 using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation("Received successful response from {Url} with status code {StatusCode}", url, response.StatusCode);
+                    response.EnsureSuccessStatusCode();
+
+                }
+
+                _logger.LogInformation("Received successful response from {Url} with status code {StatusCode}", url, response.StatusCode);
+
                 var json = await response.Content.ReadAsStringAsync();
                 result = JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                _logger.LogError(ex, "Error occurred while sending request to {Url}", url);
             }
 
             return result;
