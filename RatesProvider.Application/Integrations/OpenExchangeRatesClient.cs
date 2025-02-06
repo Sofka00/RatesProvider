@@ -8,10 +8,10 @@ namespace RatesProvider.Application.Integrations;
 
 public class OpenExchangeRatesClient : ICurrencyRateProvider
 {
-    private readonly AppSettings _appSettings;
+    private readonly ApiSettings _appSettings;
     private readonly ICommonHttpClient _commonHttpClient;
 
-    public OpenExchangeRatesClient(IOptions<AppSettings> appSettings, ICommonHttpClient ratesProviderHttpRequest)
+    public OpenExchangeRatesClient(IOptions<ApiSettings> appSettings, ICommonHttpClient ratesProviderHttpRequest)
     {
 
         _appSettings = appSettings.Value;
@@ -20,7 +20,7 @@ public class OpenExchangeRatesClient : ICurrencyRateProvider
 
     public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
     {
-        var url = $"https://openexchangerates.org/api/latest.json?app_id={_appSettings.OpenExchangeRatesApiKey}";
+        var url = $"https://openexchangerates.org/api/latest.json?app_id={_appSettings.ExchangeratesApiKey}";
         var response = await _commonHttpClient.SendRequestAsync<OpenExchangeRatesResponse>(url);
 
         var currencyRate = new CurrencyRateResponse

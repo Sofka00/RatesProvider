@@ -4,5 +4,7 @@
     {
         public string FixerApiKey { get; set; }
         public string ExchangeratesApiKey { get; set; }
+
+        public string CurrencyApiKey { get; set; }
     }
 }

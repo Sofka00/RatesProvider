@@ -8,10 +8,10 @@ namespace RatesProvider.Application.Integrations;
 
 public class CurrencyApiClient : ICurrencyRateProvider
 {
-    private readonly AppSettings _appSettings;
+    private readonly ApiSettings _appSettings;
     private readonly ICommonHttpClient _commonHttpClient;
 
-    public CurrencyApiClient(IOptions<AppSettings> appSettings, ICommonHttpClient ratesProviderHttpRequest)
+    public CurrencyApiClient(IOptions<ApiSettings> appSettings, ICommonHttpClient ratesProviderHttpRequest)
     {
         _appSettings = appSettings.Value;
         _commonHttpClient = ratesProviderHttpRequest;
@@ -25,7 +25,7 @@ public class CurrencyApiClient : ICurrencyRateProvider
         var currencyRate = new CurrencyRateResponse
         {
             BaseCurrency = Enum.Parse<Currencies>(response.Data.ToString()),
-            Rates = response.CurrencyValue(),
+            //Rates = response.CurrencyValue(),
             Date = DateTime.Parse(response.Meta.ToString())
         };
 
