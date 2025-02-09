@@ -1,4 +1,5 @@
-﻿using RatesProvider.Application.Interfaces;
+using RatesProvider.Application.Integrations;
+using RatesProvider.Application.Interfaces;
 
 
 public class Worker : BackgroundService

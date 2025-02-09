@@ -1,4 +1,4 @@
-﻿using RatesProvider.Application.Models;
+using RatesProvider.Application.Models;
 
 namespace RatesProvider.Application.Interfaces;
 

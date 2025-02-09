@@ -1,5 +1,5 @@
-﻿using System.Text.Json;
 using RatesProvider.Application.Interfaces;
+using System.Text.Json;
 
 namespace RatesProvider.Application.Integrations;
 
@@ -16,7 +16,6 @@ public class CommonHttpClient : ICommonHttpClient
     {
         T result = default(T);
         TimeSpan interval = new TimeSpan(0, 0, 2);
-
         try
         {
             using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
@@ -26,6 +25,7 @@ public class CommonHttpClient : ICommonHttpClient
         }
         catch (Exception ex)
         {
+
             throw ex;
         }
 

@@ -1,4 +1,4 @@
-﻿namespace RatesProvider.Application.Models
+namespace RatesProvider.Application.Models
 {
     public class CurrencyRateResponse
     {

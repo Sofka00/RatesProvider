@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
@@ -8,12 +8,11 @@ namespace RatesProvider.Application.Integrations;
 
 public class OpenExchangeRatesClient : ICurrencyRateProvider
 {
-    private readonly AppSettings _appSettings;
+    private readonly ApiSettings _appSettings;
     private readonly ICommonHttpClient _commonHttpClient;
 
-    public OpenExchangeRatesClient(IOptions<AppSettings> appSettings, ICommonHttpClient ratesProviderHttpRequest)
+    public OpenExchangeRatesClient(IOptions<ApiSettings> appSettings, ICommonHttpClient ratesProviderHttpRequest)
     {
-
         _appSettings = appSettings.Value;
         _commonHttpClient = ratesProviderHttpRequest;
     }
@@ -25,7 +24,7 @@ public class OpenExchangeRatesClient : ICurrencyRateProvider
 
         var currencyRate = new CurrencyRateResponse
         {
-            BaseCurrency = Enum.Parse<Currencies>(response.Base),
+            BaseCurrency = Enum.Parse<Currences>(response.Base),
             Rates = response.Rates,
             Date = response.Date,
         };
