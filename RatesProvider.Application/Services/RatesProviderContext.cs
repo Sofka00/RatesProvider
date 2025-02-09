@@ -34,10 +34,9 @@ namespace RatesProvider.Application.Services
                     await Task.Delay(interval * i);
 
                 }
-
             }
+
             return response;
         }
-
     }
 }

@@ -1,9 +1,8 @@
 ﻿using RatesProvider.Application.Models;
 
-namespace RatesProvider.Application.Interfaces
+namespace RatesProvider.Application.Interfaces;
+
+public interface ICurrencyRateProvider
 {
-    public interface ICurrencyRateProvider
-    {
-        Task<CurrencyRateResponse> GetCurrencyRatesAsync();
-    }
+    Task<CurrencyRateResponse> GetCurrencyRatesAsync();
 }

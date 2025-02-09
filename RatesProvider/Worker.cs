@@ -10,8 +10,6 @@ public class Worker : BackgroundService
     {
         _logger = logger;
         _currencyRateManager = currencyRateManager;
-   
-      
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

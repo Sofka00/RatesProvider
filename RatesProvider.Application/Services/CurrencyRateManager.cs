@@ -2,31 +2,36 @@
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
 
-namespace RatesProvider.Application.Services
+namespace RatesProvider.Application.Services;
+
+public class CurrencyRateManager : ICurrencyRateManager
 {
-    public class CurrencyRateManager : ICurrencyRateManager
+    private readonly ICurrencyRateProvider _providerFixer;
+    private readonly ICurrencyRateProvider _providerCurrencyApi;
+    private readonly ICurrencyRateProvider _providerOpenExchangeRates;
+    private IRatesProviderContext _context;
+
+    public CurrencyRateManager(IRatesProviderContext context, 
+        [FromKeyedServices("Fixer")] ICurrencyRateProvider providerFixer, 
+        [FromKeyedServices("CurrencyApi")] ICurrencyRateProvider providerCurrencyApi,
+        [FromKeyedServices("OpenExchangeRates")] ICurrencyRateProvider providerOpenExchangeRates
+        )
     {
-        private readonly ICurrencyRateProvider _providerFixer;
-        private IRatesProviderContext _context;
+        _context = context;
+        _providerFixer = providerFixer;
+        _providerCurrencyApi = providerCurrencyApi;
+        _providerOpenExchangeRates = providerOpenExchangeRates;
 
-        public CurrencyRateManager(IRatesProviderContext context, [FromKeyedServices("Fixer")] ICurrencyRateProvider providerFixer)
-        {
-            _context = context;
-            _providerFixer = providerFixer;
+    }
 
-        }
+    public async Task<CurrencyRateResponse> GetRatesAsync()
+    {
+        CurrencyRateResponse result = default;
 
-        public async Task<CurrencyRateResponse> GetRatesAsync()
-        {
-            CurrencyRateResponse result = default;
+        _context.SetCurrencyRatesProvider(_providerFixer);
 
-            _context.SetCurrencyRatesProvider(_providerFixer);
+        result = await _context.GetRatesAsync();
 
-            result = await _context.GetRatesAsync();
-
-            return result;
-        }
-
-
+        return result;
     }
 }
