@@ -27,19 +27,21 @@ namespace RatesProvider.Application.Integrations
             var url = $"https://data.fixer.io/api/latest?access_key={_apiSettings.FixerApiKey}";
             try
             {
-                _logger.LogInformation("Sending request to Fixer API: {Url}", url.ToString()); //тут логируем запрос 
+                _logger.LogInformation("Sending request to Fixer API: {Url}", url.ToString()); 
+                                                                                               
+                _logger.LogDebug("Request URL to Fixer API: {Url}", url);
                 var response = await _commonHttpClient.SendRequestAsync<FixerResponse>(url.ToString());
 
-                _logger.LogInformation("Received response from Fixer API: {StatusCode}", response?.Base);
-
+                _logger.LogDebug("Response content from Fixer API: {ResponseContent}", response);
 
                 var currencyRate = new CurrencyRateResponse
                 {
                     BaseCurrency = Enum.Parse<Currences>(response.Base),
                     Rates = response.Rates,
                     Date = response.Date,
-
                 };
+
+                _logger.LogDebug("Parsed currency rate response: {CurrencyRate}", currencyRate);
                 return currencyRate;
             }
             catch (Exception ex)

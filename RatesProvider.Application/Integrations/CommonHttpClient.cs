@@ -22,8 +22,11 @@ namespace RatesProvider.Application.Integrations
             TimeSpan interval = new TimeSpan(0, 0, 2);
             try
             {
+                _logger.LogDebug("Attempting to send GET request to URL: {Url}", url);
                 _logger.LogInformation("Sending GET request to URL: {Url}", url);
                 using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+
+                _logger.LogDebug("Received response with status code {StatusCode} from URL: {Url}", response.StatusCode, url);
                 if (!response.IsSuccessStatusCode)
                 {
                     _logger.LogInformation("Received successful response from {Url} with status code {StatusCode}", url, response.StatusCode);
@@ -32,8 +35,9 @@ namespace RatesProvider.Application.Integrations
                 }
 
                 _logger.LogInformation("Received successful response from {Url} with status code {StatusCode}", url, response.StatusCode);
-
                 var json = await response.Content.ReadAsStringAsync();
+
+                _logger.LogDebug("Response content: {JsonContent}", json);
                 result = JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
             catch (Exception ex)
@@ -43,9 +47,6 @@ namespace RatesProvider.Application.Integrations
 
             return result;
         }
-
-
-
     }
 }
 
