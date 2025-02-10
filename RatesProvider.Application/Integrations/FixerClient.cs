@@ -10,12 +10,14 @@ namespace RatesProvider.Application.Integrations
     {
         private readonly ApiSettings _apiSettings;
         private readonly ICommonHttpClient _commonHttpClient;
+        private readonly List<Currencies> _desiredCurrencyPairs;
 
 
         public FixerClient(IOptions<ApiSettings> apiSettings, ICommonHttpClient ratesProviderHttpRequest)
         {
             _apiSettings = apiSettings.Value;
             _commonHttpClient = ratesProviderHttpRequest;
+            _desiredCurrencyPairs = _commonHttpClient.GetAvailableCurrencies();
         }
         public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
         {
@@ -24,13 +26,27 @@ namespace RatesProvider.Application.Integrations
 
             var currencyRate = new CurrencyRateResponse
             {
-                BaseCurrency = Enum.Parse<Currences>(response.Base),
-                Rates = response.Rates,
+                BaseCurrency = Enum.Parse<Currencies>(response.Base),
+                Rates = new Dictionary<string, decimal>(),
                 Date = response.Date,
 
             };
-            return currencyRate;
 
+            foreach (var rate in response.Rates)
+            {
+                var baseCurrencyEnum = Enum.Parse<Currencies>(response.Base);
+                if (Enum.TryParse<Currencies>(rate.Key, out var parsedTargetCurrencyEnum))
+                {
+                    if (_desiredCurrencyPairs.Contains(parsedTargetCurrencyEnum))
+                    {
+                        var currencyPair = $"{baseCurrencyEnum}{parsedTargetCurrencyEnum}";
+                        currencyRate.Rates[currencyPair] = rate.Value;
+                    }
+                }
+
+            }
+            return currencyRate;
         }
     }
 }
+

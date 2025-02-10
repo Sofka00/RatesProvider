@@ -24,7 +24,7 @@ public class OpenExchangeRatesClient : ICurrencyRateProvider
 
         var currencyRate = new CurrencyRateResponse
         {
-            BaseCurrency = Enum.Parse<Currences>(response.Base),
+            BaseCurrency = Enum.Parse<Currencies>(response.Base),
             Rates = response.Rates,
             Date = response.Date,
         };
