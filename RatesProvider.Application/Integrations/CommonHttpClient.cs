@@ -1,4 +1,5 @@
 ﻿using RatesProvider.Application.Interfaces;
+using RatesProvider.Application.Models;
 using System.Text.Json;
 
 namespace RatesProvider.Application.Integrations;
@@ -6,10 +7,12 @@ namespace RatesProvider.Application.Integrations;
 public class CommonHttpClient : ICommonHttpClient
 {
     private readonly HttpClient _client;
+    private readonly AvailableCurrencies _availableCurrencies;
 
-    public CommonHttpClient(HttpClient client)
+    public CommonHttpClient(HttpClient client, AvailableCurrencies availableCurrencies)
     {
         _client = client;
+        _availableCurrencies = availableCurrencies;
     }
 
     public async Task<T> SendRequestAsync<T>(string url)
@@ -30,5 +33,10 @@ public class CommonHttpClient : ICommonHttpClient
         }
 
         return result;
+    }
+
+    public List<Currencies> GetAvailableCurrencies()
+    {
+        return _availableCurrencies.AvailableCurrencyList;
     }
 }

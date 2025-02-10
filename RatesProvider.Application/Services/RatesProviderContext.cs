@@ -27,6 +27,10 @@ namespace RatesProvider.Application.Services
                 try
                 {
                     response = await _currencyRateProvider.GetCurrencyRatesAsync();
+                    if (response!=null)
+                    {
+                        break;
+                    }
 
                 }
                 catch

@@ -24,7 +24,7 @@ public class CurrencyApiClient : ICurrencyRateProvider
 
         var currencyRate = new CurrencyRateResponse
         {
-            BaseCurrency = Enum.Parse<Currences>(response.Data.ToString()),
+            BaseCurrency = Enum.Parse<Currencies>(response.Data.ToString()),
             //Rates = Enum.Parse<Currences>(response),
             Date = DateTime.Parse(response.Meta.ToString())
         };
