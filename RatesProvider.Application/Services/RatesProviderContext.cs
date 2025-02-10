@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
 
@@ -41,11 +41,9 @@ namespace RatesProvider.Application.Services
                     await Task.Delay(interval * i);
 
                 }
-
             }
             _logger.LogError("All attempts to fetch currency rates failed.");
             return response;
         }
-
     }
 }

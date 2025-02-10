@@ -1,4 +1,4 @@
-﻿using RatesProvider.Application.Integrations;
+using RatesProvider.Application.Integrations;
 using RatesProvider.Application.Interfaces;
 
 

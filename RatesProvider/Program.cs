@@ -1,4 +1,6 @@
-﻿using RatesProvider.Application.Configuration;
+using Microsoft.Extensions.Logging.Configuration;
+using Microsoft.Extensions.Logging.EventLog;
+using RatesProvider.Application.Configuration;
 using Serilog;
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -34,13 +36,13 @@ var host = builder.Build();
 try
 {
     Log.Information("Starting up the service...");
-    host.Run();
 }
+    host.Run();
 catch (Exception ex)
 {
     Log.Fatal(ex, "An unhandled exception occurred during startup.");
-}
 finally
+}
 {
     Log.CloseAndFlush();
 }

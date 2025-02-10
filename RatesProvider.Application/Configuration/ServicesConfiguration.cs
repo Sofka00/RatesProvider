@@ -3,18 +3,18 @@ using RatesProvider.Application.Integrations;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Services;
 
-namespace RatesProvider.Application.Configuration
+namespace RatesProvider.Application.Configuration;
+
+public static class ServicesConfiguration
 {
-    public static class ServicesConfiguration
+    public static void AddApplicationServices(this IServiceCollection services)
     {
-        public static void AddApplicationServices(this IServiceCollection services)
-        {
-            services.AddSingleton<ICurrencyRateManager, CurrencyRateManager>();
-            services.AddKeyedSingleton<ICurrencyRateProvider, FixerClient>("Fixer"); 
-            services.AddSingleton<IRatesProviderContext, RatesProviderContext>();
-            services.AddSingleton<ICommonHttpClient, CommonHttpClient>();
-            services.AddHttpClient();
-            
-        }
+        services.AddSingleton<ICurrencyRateManager, CurrencyRateManager>();
+        services.AddKeyedSingleton<ICurrencyRateProvider, FixerClient>("Fixer");
+        services.AddKeyedSingleton<ICurrencyRateProvider, CurrencyApiClient>("CurrencyApi");
+        services.AddKeyedSingleton<ICurrencyRateProvider, OpenExchangeRatesClient>("OpenExchangeRates");
+        services.AddSingleton<IRatesProviderContext, RatesProviderContext>();
+        services.AddSingleton<ICommonHttpClient, CommonHttpClient>();
+        services.AddHttpClient(); 
     }
 }

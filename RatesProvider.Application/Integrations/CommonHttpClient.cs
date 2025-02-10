@@ -1,10 +1,14 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using RatesProvider.Application.Interfaces;
 using System.Text.Json;
 
-namespace RatesProvider.Application.Integrations
+namespace RatesProvider.Application.Integrations;
+
+public class CommonHttpClient : ICommonHttpClient
 {
-    public class CommonHttpClient : ICommonHttpClient
+    private readonly HttpClient _client;
+
+    public CommonHttpClient(HttpClient client)
     {
         private readonly HttpClient _client;
         private readonly ILogger<CommonHttpClient> _logger;
@@ -15,8 +19,7 @@ namespace RatesProvider.Application.Integrations
             _logger = logger;
 
         }
-
-        public async Task<T> SendRequestAsync<T>(string url)
+        catch (Exception ex)
         {
             T result = default(T);
             TimeSpan interval = new TimeSpan(0, 0, 2);
@@ -49,4 +52,3 @@ namespace RatesProvider.Application.Integrations
         }
     }
 }
-
