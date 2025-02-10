@@ -13,9 +13,6 @@ namespace RatesProvider.Application.Integrations
         private readonly ICommonHttpClient _commonHttpClient;
         private readonly ILogger<FixerClient> _logger;
 
-
-
-
         public FixerClient(IOptions<ApiSettings> apiSettings, ICommonHttpClient ratesProviderHttpRequest, ILogger<FixerClient> logger)
         {
             _apiSettings = apiSettings.Value;

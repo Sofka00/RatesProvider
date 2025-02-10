@@ -36,13 +36,13 @@ var host = builder.Build();
 try
 {
     Log.Information("Starting up the service...");
-}
     host.Run();
+}
 catch (Exception ex)
 {
     Log.Fatal(ex, "An unhandled exception occurred during startup.");
-finally
 }
+finally
 {
     Log.CloseAndFlush();
 }
