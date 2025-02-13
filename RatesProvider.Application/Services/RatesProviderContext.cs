@@ -29,8 +29,9 @@ namespace RatesProvider.Application.Services
                     response = await _currencyRateProvider.GetCurrencyRatesAsync();
 
                 }
-                catch
+                catch(Exception ex)
                 {
+                    var c = ex;
                     await Task.Delay(interval * i);
 
                 }
