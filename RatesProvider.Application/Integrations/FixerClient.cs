@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using MassTransit;
+using Microsoft.Extensions.Options;
 using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
@@ -10,12 +11,11 @@ namespace RatesProvider.Application.Integrations
     {
         private readonly ApiSettings _apiSettings;
         private readonly ICommonHttpClient _commonHttpClient;
-
-
         public FixerClient(IOptions<ApiSettings> apiSettings, ICommonHttpClient ratesProviderHttpRequest)
         {
             _apiSettings = apiSettings.Value;
             _commonHttpClient = ratesProviderHttpRequest;
+
         }
         public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
         {

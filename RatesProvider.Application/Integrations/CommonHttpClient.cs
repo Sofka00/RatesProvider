@@ -7,7 +7,7 @@ public class CommonHttpClient : ICommonHttpClient
 {
     private readonly HttpClient _client;
 
-    public CommonHttpClient(HttpClient client)
+    public CommonHttpClient(HttpClient client )
     {
         _client = client;
     }
