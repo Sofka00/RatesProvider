@@ -23,17 +23,12 @@ public class CommonHttpClient : ICommonHttpClient
 
         try
         {
-            _logger.LogDebug("Attempting to send GET request to URL: {Url}", url);
+
             _logger.LogInformation("Sending GET request to URL: {Url}", url);
             using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
 
             _logger.LogDebug("Received response with status code {StatusCode} from URL: {Url}", response.StatusCode, url);
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogInformation("Received successful response from {Url} with status code {StatusCode}", url, response.StatusCode);
-                response.EnsureSuccessStatusCode();
-
-            }
+            response.EnsureSuccessStatusCode();
 
             _logger.LogInformation("Received successful response from {Url} with status code {StatusCode}", url, response.StatusCode);
             var json = await response.Content.ReadAsStringAsync();

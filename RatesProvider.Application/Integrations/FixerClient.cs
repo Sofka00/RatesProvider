@@ -24,10 +24,13 @@ namespace RatesProvider.Application.Integrations
             var url = $"https://data.fixer.io/api/latest?access_key={_apiSettings.FixerApiKey}";
             try
             {
-                _logger.LogInformation("Sending request to Fixer API: {Url}", url.ToString()); 
-                                                                                               
-                _logger.LogDebug("Request URL to Fixer API: {Url}", url);
                 var response = await _commonHttpClient.SendRequestAsync<FixerResponse>(url.ToString());
+
+                if (response == null)
+                {
+                    _logger.LogWarning("No response received from Fixer API.");
+                    return new CurrencyRateResponse(); 
+                }
 
                 _logger.LogDebug("Response content from Fixer API: {ResponseContent}", response);
 
@@ -44,7 +47,7 @@ namespace RatesProvider.Application.Integrations
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while fetching currency rates from Fixer API.");
-                throw;
+                return new CurrencyRateResponse();
             }
 
         }

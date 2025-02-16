@@ -24,9 +24,6 @@ public class OpenExchangeRatesClient : ICurrencyRateProvider
         var url = $"https://openexchangerates.org/api/latest.json?app_id={_appSettings.OpenExchangeRatesApiKey}";
         try
         {
-            _logger.LogInformation("Sending request to  OpenExchangeRates API: {Url}", url.ToString());
-
-            _logger.LogDebug("Request URL to  OpenExchangeRates API: {Url}", url);
             var response = await _commonHttpClient.SendRequestAsync<OpenExchangeRatesResponse>(url);
 
             _logger.LogDebug("Response content from Fixer API: {ResponseContent}", response);

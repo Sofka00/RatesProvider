@@ -27,9 +27,6 @@ public class CurrencyRateManager : ICurrencyRateManager
         _context = context;
 
         _logger = logger;
-
-        _logger.LogInformation("CurrencyRateManager initialized with provider: {ProviderType}", _providerFixer.GetType().Name);
-
     }
 
     public async Task<CurrencyRateResponse> GetRatesAsync()
@@ -39,7 +36,6 @@ public class CurrencyRateManager : ICurrencyRateManager
 
         try
         {
-            _logger.LogInformation("Setting the currency rate provider to: {ProviderType}", _providerFixer.GetType().Name);
             _context.SetCurrencyRatesProvider(_providerFixer);
 
             _logger.LogInformation("Attempting to retrieve currency rates...");
@@ -52,7 +48,7 @@ public class CurrencyRateManager : ICurrencyRateManager
             }
             else
             {
-                _logger.LogWarning("No currency rates were returned.");
+                _logger.LogError("No currency rates were returned.");
             }
         }
 
