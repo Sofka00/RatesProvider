@@ -8,27 +8,77 @@ namespace RatesProvider.Application.Integrations;
 
 public class CurrencyApiClient : ICurrencyRateProvider
 {
-    private readonly ApiSettings _appSettings;
+    private readonly CurrencyApiClientSettings _currencyApiSettings;
     private readonly ICommonHttpClient _commonHttpClient;
 
-    public CurrencyApiClient(IOptions<ApiSettings> appSettings, ICommonHttpClient ratesProviderHttpRequest)
+    public CurrencyApiClient(IOptions<CurrencyApiClientSettings> currencyApiSettings, ICommonHttpClient ratesProviderHttpRequest)
     {
-        _appSettings = appSettings.Value;
+        _currencyApiSettings = currencyApiSettings.Value;
         _commonHttpClient = ratesProviderHttpRequest;
     }
 
     public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
     {
-        var url = $"https://api.currencyapi.com/v3/latest?apikey={_appSettings.CurrencyApiKey}";
+        var url = $"{_currencyApiSettings.BaseUrl}{_currencyApiSettings.QueryOption}{_currencyApiSettings.ApiKey}";
         var response = await _commonHttpClient.SendRequestAsync<CurrencyResponse>(url);
-
-        var currencyRate = new CurrencyRateResponse
-        {
-            BaseCurrency = Enum.Parse<Currences>(response.Data.ToString()),
-            //Rates = Enum.Parse<Currences>(response),
-            Date = DateTime.Parse(response.Meta.ToString())
-        };
+        var currencyRate = Convert(response);
 
         return currencyRate;
+    }
+
+    public CurrencyRateResponse Convert(CurrencyResponse response)
+    {
+        var baseCurrency = BaseCurrency.USD;
+        var date = response.Meta?.LastUpdatedAt ?? DateTime.Now;
+        var rates = new Dictionary<string, decimal>();
+
+        rates.Add(baseCurrency.ToString() + baseCurrency.ToString(), 1);
+
+        if (response.Data.RUB != null)
+        {
+            rates.Add(baseCurrency.ToString() + response.Data.RUB.Code, response.Data.RUB.Value);
+        }
+
+        if (response.Data.USD != null)
+        {
+            rates.Add(baseCurrency.ToString() + response.Data.USD.Code, response.Data.USD.Value);
+        }
+
+        if (response.Data.EUR != null)
+        {
+            rates.Add(baseCurrency.ToString() + response.Data.EUR.Code, response.Data.EUR.Value);
+        }
+
+        if (response.Data.JPY != null)
+        {
+            rates.Add(baseCurrency.ToString() + response.Data.JPY.Code, response.Data.JPY.Value);
+        }
+
+        if (response.Data.CNY != null)
+        {
+            rates.Add(baseCurrency.ToString() + response.Data.CNY.Code, response.Data.CNY.Value);
+        }
+
+        if (response.Data.RSD != null)
+        {
+            rates.Add(baseCurrency.ToString() + response.Data.RSD.Code, response.Data.RSD.Value);
+        }
+
+        if (response.Data.BGN != null)
+        {
+            rates.Add(baseCurrency.ToString() + response.Data.BGN.Code, response.Data.BGN.Value);
+        }
+
+        if (response.Data.ARS != null)
+        {
+            rates.Add(baseCurrency.ToString() + response.Data.ARS.Code, response.Data.ARS.Value);
+        }
+
+        return new CurrencyRateResponse
+        {
+            BaseCurrency = baseCurrency,
+            Rates = rates,
+            Date = date
+        };
     }
 }

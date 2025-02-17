@@ -18,8 +18,10 @@ if (builder.Environment.IsDevelopment())
     builder.Configuration.AddUserSecrets<Program>();
 }
 
-// Регистрация настроек ApiSettings
-builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
+//Регистрация настроек ApiSettings
+builder.Services.Configure<OpenExchangeClientSettings>(builder.Configuration.GetSection("OpenExchangeClient")); 
+builder.Services.Configure<CurrencyApiClientSettings>(builder.Configuration.GetSection("CurrencyApiClient"));
+builder.Services.Configure<FixerClientSettings>(builder.Configuration.GetSection("FixerClient"));
 Console.WriteLine(builder.Configuration.GetDebugView());
 
 var configuration = builder.Configuration;
