@@ -24,7 +24,7 @@ namespace RatesProvider.Application.Integrations
 
             var currencyRate = new CurrencyRateResponse
             {
-                BaseCurrency = Enum.Parse<Currences>(response.Base),
+                BaseCurrency = Enum.Parse<BaseCurrency>(response.Base),
                 Rates = response.Rates,
                 Date = response.Date,
 

@@ -28,7 +28,7 @@ public class CurrencyRateManager : ICurrencyRateManager
     {
         CurrencyRateResponse result = default;
 
-        _context.SetCurrencyRatesProvider(_providerFixer);
+        _context.SetCurrencyRatesProvider(_providerCurrencyApi);
 
         result = await _context.GetRatesAsync();
 
