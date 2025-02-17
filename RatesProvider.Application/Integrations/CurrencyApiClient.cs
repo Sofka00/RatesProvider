@@ -39,11 +39,6 @@ public class CurrencyApiClient : ICurrencyRateProvider
             rates.Add(baseCurrency.ToString() + response.Data.RUB.Code, response.Data.RUB.Value);
         }
 
-        if (response.Data.USD != null)
-        {
-            rates.Add(baseCurrency.ToString() + response.Data.USD.Code, response.Data.USD.Value);
-        }
-
         if (response.Data.EUR != null)
         {
             rates.Add(baseCurrency.ToString() + response.Data.EUR.Code, response.Data.EUR.Value);
