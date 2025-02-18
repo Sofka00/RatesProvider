@@ -6,24 +6,13 @@ using System.Threading.Tasks;
 
 namespace RatesProvider.Application.Models
 {
-    public class AvailableCurrencies
+    public static class AvailableCurrencies
     {
-        public List<Currencies> AvailableCurrencyList { get; set; }
-        public AvailableCurrencies()
-        {
-            AvailableCurrencyList = new List<Currencies>
-            {
-                Currencies.RUB,
-                Currencies.USD,
-                Currencies.EUR,
-                Currencies.JPY,
-                Currencies.CNY,
-                Currencies.RSD,
-                Currencies.BGN,
-                Currencies.ARS
-
-            };
-        }
-    }
+        public static List<Currencies> AvailableCurrencyList= Enum.GetValues(typeof(Currencies))
+                   .Cast<Currencies>()
+                   .ToList();
+    };
+        
+    
 }
 
