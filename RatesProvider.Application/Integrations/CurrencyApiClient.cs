@@ -26,9 +26,9 @@ public class CurrencyApiClient : ICurrencyRateProvider
         return currencyRate;
     }
 
-    public CurrencyRateResponse Convert(CurrencyResponse response)
+    private CurrencyRateResponse Convert(CurrencyResponse response)
     {
-        var baseCurrency = BaseCurrency.USD;
+        var baseCurrency = Currency.USD;
         var date = response.Meta?.LastUpdatedAt ?? DateTime.Now;
         var rates = new Dictionary<string, decimal>();
 

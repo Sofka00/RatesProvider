@@ -1,6 +1,6 @@
 ﻿namespace RatesProvider.Application.Models;
 
-public enum BaseCurrency
+public enum Currency
 {
     Unknown = 0,
     RUB, // Russian Ruble

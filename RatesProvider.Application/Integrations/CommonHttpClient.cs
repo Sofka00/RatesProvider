@@ -19,7 +19,7 @@ public class CommonHttpClient : ICommonHttpClient
 
         try
         {
-            var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync();
             result = JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
