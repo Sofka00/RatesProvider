@@ -36,6 +36,7 @@ public class CurrencyRateManager : ICurrencyRateManager
 
         try
         {
+            _logger.LogInformation("Setting the currency rate provider to {ProviderType}",_providerFixer.GetType().Name);
             _context.SetCurrencyRatesProvider(_providerFixer);
 
             _logger.LogInformation("Attempting to retrieve currency rates...");

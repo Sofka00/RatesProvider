@@ -4,6 +4,7 @@ using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
 using RatesProvider.Application.Models.FixerApiModels;
+using System.Data;
 
 namespace RatesProvider.Application.Integrations
 {
@@ -28,8 +29,7 @@ namespace RatesProvider.Application.Integrations
 
                 if (response == null)
                 {
-                    _logger.LogWarning("No response received from Fixer API.");
-                    return new CurrencyRateResponse(); 
+                    throw new Exception("No response received from Fixer API.");
                 }
 
                 _logger.LogDebug("Response content from Fixer API: {ResponseContent}", response);
@@ -47,7 +47,7 @@ namespace RatesProvider.Application.Integrations
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while fetching currency rates from Fixer API.");
-                return new CurrencyRateResponse();
+                throw ex;
             }
 
         }
