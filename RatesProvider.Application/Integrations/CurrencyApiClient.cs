@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
@@ -10,7 +10,6 @@ public class CurrencyApiClient : ICurrencyRateProvider
 {
     private readonly CurrencyApiClientSettings _currencyApiSettings;
     private readonly ICommonHttpClient _commonHttpClient;
-
     public CurrencyApiClient(IOptions<CurrencyApiClientSettings> currencyApiSettings, ICommonHttpClient ratesProviderHttpRequest)
     {
         _currencyApiSettings = currencyApiSettings.Value;
