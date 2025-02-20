@@ -10,7 +10,6 @@ public class CurrencyApiClient : ICurrencyRateProvider
 {
     private readonly ApiSettings _appSettings;
     private readonly ICommonHttpClient _commonHttpClient;
-
     public CurrencyApiClient(IOptions<ApiSettings> appSettings, ICommonHttpClient ratesProviderHttpRequest)
     {
         _appSettings = appSettings.Value;

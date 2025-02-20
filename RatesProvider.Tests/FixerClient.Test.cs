@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Integrations;
@@ -6,23 +8,19 @@ using RatesProvider.Application.Models.FixerApiModels;
 namespace RatesProvider.Tests
 
 {
-    public class UnitTest1
+    public class FixerClientTest
     {
-        private readonly Mock<ICommonHttpClient> _mockHttpClient;
-        private readonly FixerClient _fixerClient;
-        private readonly Mock<IOptions<ApiSettings>> _mockOptions;
-
-        public UnitTest1()
-        {
-            _mockHttpClient = new Mock<ICommonHttpClient>();
-            _fixerClient = new FixerClient(_mockOptions.Object, _mockHttpClient.Object); ;
-            _mockOptions = new Mock<IOptions<ApiSettings>>();
-        }
-
         [Fact]
         public async Task GetCurrencyRatesAsync_ShouldReturnCurrencyRateResponse_WhenResponseIsValid()
         {
-            _mockHttpClient
+            var mockOptions = new Mock<IOptions<ApiSettings>>();
+            mockOptions       .Setup(opt => opt.Value)
+                .Returns(new ApiSettings { FixerApiKey = "valid-api-key" });
+
+            var mockLogger = new Mock<ILogger<FixerClient>>();
+
+            var mockHttpClient = new Mock<ICommonHttpClient>();
+            mockHttpClient
                  .Setup(client => client.SendRequestAsync<FixerResponse>(It.IsAny<string>()))
                 .ReturnsAsync(new FixerResponse
                 {
@@ -31,21 +29,14 @@ namespace RatesProvider.Tests
                     {
                         { "USD", 1.1m },
                         { "ARS",1109.8m},
-                        { "BGN",1109.8m}
+                        { "BGN",11.00m}
                     },
                     Date = DateTime.Now
                 });
 
-            _mockOptions
-                .Setup(opt => opt.Value)
-                .Returns(new ApiSettings { FixerApiKey = "valid-api-key" });
+            var fixerClient = new FixerClient(mockOptions.Object, mockHttpClient.Object, mockLogger.Object); ;
 
-            var fixerClient = new FixerClient(_mockOptions.Object, _mockHttpClient.Object);
-
-            // Act
             var result = await fixerClient.GetCurrencyRatesAsync();
-
-            // Assert
             Assert.NotNull(result);
             Assert.Equal("EUR", result.BaseCurrency.ToString());
             Assert.Contains("EURUSD", result.Rates.Keys);
@@ -53,15 +44,21 @@ namespace RatesProvider.Tests
             Assert.Contains("EURARS", result.Rates.Keys);
             Assert.Equal(1109.8m, result.Rates["EURARS"]);
             Assert.Contains("EURBGN", result.Rates.Keys);
-            Assert.Equal(1109.8m, result.Rates["EURBGN"]);
+            Assert.Equal(11.00m, result.Rates["EURBGN"]);
         }
 
         [Fact]
         public async Task GetCurrencyRatesAsync_ShouldReturnEmptyRates_WhenResponseIsInvalid()
         {
 
+            var mockOptions = new Mock<IOptions<ApiSettings>>();
+            mockOptions.Setup(opt => opt.Value)
+                .Returns(new ApiSettings { FixerApiKey = "valid-api-key" });
 
-            _mockHttpClient
+            var mockLogger = new Mock<ILogger<FixerClient>>();
+
+            var mockHttpClient = new Mock<ICommonHttpClient>();
+            mockHttpClient
                 .Setup(client => client.SendRequestAsync<FixerResponse>(It.IsAny<string>()))
                 .ReturnsAsync(new FixerResponse
                 {
@@ -70,11 +67,10 @@ namespace RatesProvider.Tests
                     Date = DateTime.Now
                 });
 
-            _mockOptions
-                .Setup(opt => opt.Value)
-                .Returns(new ApiSettings { FixerApiKey = "valid-api-key" });
 
-            var result = await _fixerClient.GetCurrencyRatesAsync();
+            var fixerClient = new FixerClient(mockOptions.Object, mockHttpClient.Object, mockLogger.Object); ;
+
+            var result = await fixerClient.GetCurrencyRatesAsync();
 
             Assert.NotNull(result);
             Assert.Equal("EUR", result.BaseCurrency.ToString());
@@ -84,16 +80,21 @@ namespace RatesProvider.Tests
         [Fact]
         public async Task GetCurrencyRatesAsync_ShouldThrowException_WhenApiFails()
         {
+            var mockOptions = new Mock<IOptions<ApiSettings>>();
+            mockOptions.Setup(opt => opt.Value)
+             .Returns(new ApiSettings { FixerApiKey = "valid-api-key" });
 
-            _mockHttpClient
+            var mockLogger = new Mock<ILogger<FixerClient>>();
+
+            var mockHttpClient = new Mock<ICommonHttpClient>();
+            mockHttpClient
                 .Setup(client => client.SendRequestAsync<FixerResponse>(It.IsAny<string>()))
                 .ThrowsAsync(new Exception("API request failed"));
 
-            _mockOptions
-                .Setup(opt => opt.Value)
-                .Returns(new ApiSettings { FixerApiKey = "valid-api-key" });
 
-            var exception = await Assert.ThrowsAsync<Exception>(() => _fixerClient.GetCurrencyRatesAsync());
+            var fixerClient = new FixerClient(mockOptions.Object, mockHttpClient.Object, mockLogger.Object); ;
+
+            var exception = await Assert.ThrowsAsync<Exception>(() => fixerClient.GetCurrencyRatesAsync());
             Assert.Equal("API request failed", exception.Message);
         }
     }

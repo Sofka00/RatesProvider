@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
@@ -10,6 +11,7 @@ public class OpenExchangeRatesClient : ICurrencyRateProvider
 {
     private readonly ApiSettings _appSettings;
     private readonly ICommonHttpClient _commonHttpClient;
+    private readonly ILogger<OpenExchangeRatesClient> _logger;
 
     public OpenExchangeRatesClient(IOptions<ApiSettings> appSettings, ICommonHttpClient ratesProviderHttpRequest)
     {
@@ -20,15 +22,24 @@ public class OpenExchangeRatesClient : ICurrencyRateProvider
     public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
     {
         var url = $"https://openexchangerates.org/api/latest.json?app_id={_appSettings.OpenExchangeRatesApiKey}";
-        var response = await _commonHttpClient.SendRequestAsync<OpenExchangeRatesResponse>(url);
-
-        var currencyRate = new CurrencyRateResponse
+        try
         {
-            BaseCurrency = Enum.Parse<Currencies>(response.Base),
-            Rates = response.Rates,
-            Date = response.Date,
-        };
+            var response = await _commonHttpClient.SendRequestAsync<OpenExchangeRatesResponse>(url);
 
-        return currencyRate;
+            _logger.LogDebug("Response content from Fixer API: {ResponseContent}", response);
+            var currencyRate = new CurrencyRateResponse
+            {
+                BaseCurrency = Enum.Parse<Currencies>(response.Base),
+                Rates = response.Rates,
+                Date = response.Date,
+            };
+            _logger.LogDebug("Parsed currency rate response: {CurrencyRate}", currencyRate);
+            return currencyRate;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while fetching currency rates from Fixer API.");
+            throw;
+        }
     }
 }
