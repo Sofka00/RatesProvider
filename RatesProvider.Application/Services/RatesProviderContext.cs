@@ -31,7 +31,7 @@ namespace RatesProvider.Application.Services
                 }
                 catch(Exception ex)
                 {
-                    var c = ex;
+                    
                     await Task.Delay(interval * i);
 
                 }

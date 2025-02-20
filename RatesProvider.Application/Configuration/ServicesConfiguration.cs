@@ -3,7 +3,7 @@ using RatesProvider.Application.Integrations;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Services;
 using MassTransit;
-using RatesProvider.Application.RabbitMQ;
+using RatesProvider.Application.Models;
 
 namespace RatesProvider.Application.Configuration;
 
@@ -18,24 +18,20 @@ public static class ServicesConfiguration
         services.AddSingleton<IRatesProviderContext, RatesProviderContext>();
         services.AddHttpClient<ICommonHttpClient, CommonHttpClient>();
 
-        services.AddMassTransit(x =>
+        services.AddMassTransit(config =>
         {
-
-            x.AddConsumer<OrderCreatedConsumer>();
-
-
-            x.UsingRabbitMq((context, cfg) =>
+            config.UsingRabbitMq((ctx, cfg) =>
             {
-                cfg.Host("rabbitmq://localhost");
-
-
-                cfg.ReceiveEndpoint("currencyRateQueue", e =>
+                cfg.Host("rabbitmq://localhost", h =>
                 {
-                    e.ConfigureConsumer<OrderCreatedConsumer>(context);
+                    h.Username("guest");
+                    h.Password("guest");
                 });
+
+
+                cfg.ConfigureEndpoints(ctx);
             });
         });
-
     }
 }
     

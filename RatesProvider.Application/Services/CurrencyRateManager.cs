@@ -25,7 +25,7 @@ public class CurrencyRateManager : ICurrencyRateManager
         _providerOpenExchangeRates = providerOpenExchangeRates;
         _bus = bus;
     }
-
+    
     public async Task<CurrencyRateResponse> GetRatesAsync()
     {
         CurrencyRateResponse result = default;
