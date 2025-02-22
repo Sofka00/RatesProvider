@@ -4,25 +4,24 @@ using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
 using RatesProvider.Application.Models.FixerApiModels;
-using System.Data;
 
 namespace RatesProvider.Application.Integrations
 {
     public class FixerClient : ICurrencyRateProvider
     {
-        private readonly ApiSettings _apiSettings;
+        private readonly FixerClientSettings _fixerClienSettings;
         private readonly ICommonHttpClient _commonHttpClient;
         private readonly ILogger<FixerClient> _logger;
 
-        public FixerClient(IOptions<ApiSettings> apiSettings, ICommonHttpClient ratesProviderHttpRequest, ILogger<FixerClient> logger)
+        public FixerClient(IOptions<FixerClientSettings> fixerClienSettings, ICommonHttpClient ratesProviderHttpRequest, ILogger<FixerClient> logger)
         {
-            _apiSettings = apiSettings.Value;
+            _fixerClienSettings = fixerClienSettings.Value;
             _commonHttpClient = ratesProviderHttpRequest;
             _logger = logger;
         }
         public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
         {
-            var url = $"https://data.fixer.io/api/latest?access_key={_apiSettings.FixerApiKey}";
+            var url = $"https://data.fixer.io/api/latest?access_key={_fixerClienSettings.ApiKey}";
             try
             {
                 var response = await _commonHttpClient.SendRequestAsync<FixerResponse>(url.ToString());

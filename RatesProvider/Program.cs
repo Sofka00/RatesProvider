@@ -26,7 +26,7 @@ if (builder.Environment.IsDevelopment())
     builder.Configuration.AddUserSecrets<Program>();
 }
 
-builder.Services.Configure<OpenExchangeClientSettings>(builder.Configuration.GetSection("OpenExchangeClient")); 
+builder.Services.Configure<OpenExchangeRatesClientSettings>(builder.Configuration.GetSection("OpenExchangeClient")); 
 builder.Services.Configure<CurrencyApiClientSettings>(builder.Configuration.GetSection("CurrencyApiClient"));
 builder.Services.Configure<FixerClientSettings>(builder.Configuration.GetSection("FixerClient"));
 Console.WriteLine(builder.Configuration.GetDebugView());
