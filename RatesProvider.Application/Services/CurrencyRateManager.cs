@@ -19,9 +19,7 @@ public class CurrencyRateManager : ICurrencyRateManager
         [FromKeyedServices("Fixer")] ICurrencyRateProvider providerFixer,
         [FromKeyedServices("CurrencyApi")] ICurrencyRateProvider providerCurrencyApi,
         [FromKeyedServices("OpenExchangeRates")] ICurrencyRateProvider providerOpenExchangeRates,
-         ILogger<CurrencyRateManager> logger
-        )
-        [FromKeyedServices("OpenExchangeRates")] ICurrencyRateProvider providerOpenExchangeRates,
+         ILogger<CurrencyRateManager> logger,
         IBus bus)
     {
 
@@ -41,7 +39,7 @@ public class CurrencyRateManager : ICurrencyRateManager
 
         try
         {
-            _logger.LogInformation("Setting the currency rate provider to {ProviderType}",_providerOpenExchangeRates.GetType().Name);
+            _logger.LogInformation("Setting the currency rate provider to {ProviderType}", _providerOpenExchangeRates.GetType().Name);
             _context.SetCurrencyRatesProvider(_providerOpenExchangeRates);
 
             _logger.LogInformation("Attempting to retrieve currency rates...");
