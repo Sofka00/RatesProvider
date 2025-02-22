@@ -10,13 +10,13 @@ namespace RatesProvider.Application.Integrations
 {
     public class FixerClient : ICurrencyRateProvider
     {
-        private readonly ApiSettings _apiSettings;
+        private readonly FixerClientSettings _fixerClienSettings;
         private readonly ICommonHttpClient _commonHttpClient;
         private readonly ILogger<FixerClient> _logger;
 
-        public FixerClient(IOptions<ApiSettings> apiSettings, ICommonHttpClient ratesProviderHttpRequest, ILogger<FixerClient> logger)
+        public FixerClient(IOptions<FixerClientSettings> fixerClienSettings, ICommonHttpClient ratesProviderHttpRequest, ILogger<FixerClient> logger)
         {
-            _apiSettings = apiSettings.Value;
+            _fixerClienSettings = fixerClienSettings.Value;
             _commonHttpClient = ratesProviderHttpRequest;
             _logger = logger;
         }

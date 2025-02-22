@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35027.167
@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RatesProvider.Starter", "Ra
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RatesProvider.Application", "RatesProvider.Application\RatesProvider.Application.csproj", "{182F90D9-6F44-428A-80EC-3D77C0B16DB3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RatesProvider.Application.Tests", "RatesProvider.Application.Tests\RatesProvider.Application.Tests.csproj", "{879DD3F8-638D-49FA-A228-951B97C9817A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RatesProvider.Tests", "RatesProvider.Tests\RatesProvider.Tests.csproj", "{8B684EF8-EDED-4C60-92BC-2DB3DD98AB55}"
 EndProject
@@ -26,6 +28,10 @@ Global
 		{182F90D9-6F44-428A-80EC-3D77C0B16DB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{182F90D9-6F44-428A-80EC-3D77C0B16DB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{182F90D9-6F44-428A-80EC-3D77C0B16DB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{879DD3F8-638D-49FA-A228-951B97C9817A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{879DD3F8-638D-49FA-A228-951B97C9817A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{879DD3F8-638D-49FA-A228-951B97C9817A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{879DD3F8-638D-49FA-A228-951B97C9817A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8B684EF8-EDED-4C60-92BC-2DB3DD98AB55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8B684EF8-EDED-4C60-92BC-2DB3DD98AB55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B684EF8-EDED-4C60-92BC-2DB3DD98AB55}.Release|Any CPU.ActiveCfg = Release|Any CPU
