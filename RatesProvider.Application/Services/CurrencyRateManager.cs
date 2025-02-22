@@ -32,12 +32,12 @@ public class CurrencyRateManager : ICurrencyRateManager
     public async Task<CurrencyRateResponse> GetRatesAsync()
     {
         CurrencyRateResponse result = default;
-        _context.SetCurrencyRatesProvider(_providerOpenExchangeRates);
+        _context.SetCurrencyRatesProvider(_providerFixer);
 
         try
         {
-            _logger.LogInformation("Setting the currency rate provider to {ProviderType}",_providerOpenExchangeRates.GetType().Name);
-            _context.SetCurrencyRatesProvider(_providerOpenExchangeRates);
+            _logger.LogInformation("Setting the currency rate provider to {ProviderType}".GetType().Name);
+            _context.SetCurrencyRatesProvider(_providerFixer);
 
             _logger.LogInformation("Attempting to retrieve currency rates...");
 

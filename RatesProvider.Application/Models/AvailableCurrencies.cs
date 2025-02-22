@@ -8,8 +8,8 @@ namespace RatesProvider.Application.Models
 {
     public static class AvailableCurrencies
     {
-        public static List<Currencies> AvailableCurrencyList= Enum.GetValues(typeof(Currencies))
-                   .Cast<Currencies>()
+        public static List<Currency> AvailableCurrencyList= Enum.GetValues(typeof(Currency))
+                   .Cast<Currency>()
                    .ToList();
     };
         

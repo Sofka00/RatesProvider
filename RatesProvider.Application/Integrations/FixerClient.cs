@@ -22,7 +22,7 @@ namespace RatesProvider.Application.Integrations
         }
         public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
         {
-            var url = $"https://data.fixer.io/api/latest?access_key={_apiSettings.FixerApiKey}";
+            var url = $"https://data.fixer.io/api/latest?access_key={_fixerClienSettings.ApiKey}";
             try
             {
                 var response = await _commonHttpClient.SendRequestAsync<FixerResponse>(url.ToString());
@@ -36,7 +36,7 @@ namespace RatesProvider.Application.Integrations
 
                 var currencyRate = new CurrencyRateResponse
                 {
-                    BaseCurrency = Enum.Parse<Currencies>(response.Base),
+                    BaseCurrency = Enum.Parse<Currency>(response.Base),
                     Rates = new Dictionary<string, decimal>(),
                     Date = response.Date,
                 };
@@ -47,8 +47,8 @@ namespace RatesProvider.Application.Integrations
 
                 foreach (var rate in response.Rates)
                 {
-                    var baseCurrencyEnum = Enum.Parse<Currencies>(response.Base);
-                    if (Enum.TryParse<Currencies>(rate.Key, out var parsedTargetCurrencyEnum))
+                    var baseCurrencyEnum = Enum.Parse<Currency>(response.Base);
+                    if (Enum.TryParse<Currency>(rate.Key, out var parsedTargetCurrencyEnum))
                     {
                         if (allCurrencies.Contains(parsedTargetCurrencyEnum))
                         {
