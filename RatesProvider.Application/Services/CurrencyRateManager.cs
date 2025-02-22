@@ -32,39 +32,45 @@ public class CurrencyRateManager : ICurrencyRateManager
     public async Task<CurrencyRateResponse> GetRatesAsync()
     {
         CurrencyRateResponse result = default;
-        _context.SetCurrencyRatesProvider(_providerFixer);
 
-        try
+        var providers = new List<ICurrencyRateProvider>
         {
-            _logger.LogInformation("Setting the currency rate provider to {ProviderType}",_providerFixer.GetType().Name);
-            _context.SetCurrencyRatesProvider(_providerFixer);
+            _providerFixer,
+            _providerCurrencyApi,
+            _providerOpenExchangeRates
+        };
 
-            _logger.LogInformation("Attempting to retrieve currency rates...");
-
-            result = await _context.GetRatesAsync();
-
-            if (result != null)
+        foreach (var provider in providers)
+        {
+            try
             {
-                _logger.LogInformation("Successfully retrieved currency rates.");
+                _logger.LogInformation("Trying to fetch currency rates from {ProviderType}", provider.GetType().Name);
+
+                _context.SetCurrencyRatesProvider(provider);
+                result = await _context.GetRatesAsync();
+
+                if (result != null && result.Rates.Any())
+                {
+                    _logger.LogInformation("Successfully retrieved currency rates from {ProviderType}", provider.GetType().Name);
+                    return result;
+                }
+                else
+                {
+                    _logger.LogWarning("No data returned from {ProviderType}. Trying next provider...", provider.GetType().Name);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                _logger.LogError("No currency rates were returned.");
+                _logger.LogError(ex, "Error fetching rates from {ProviderType}. Trying next provider...", provider.GetType().Name);
             }
         }
 
-
-        catch (Exception ex)
-
-        {
-            _logger.LogError(ex, "An error occurred while retrieving currency rates.");
-
-        }
-
-        return result;
+        _logger.LogError("Failed to retrieve currency rates from all providers.");
+        return result; 
     }
-
 }
+
+
 
 
 

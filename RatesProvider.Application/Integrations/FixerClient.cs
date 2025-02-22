@@ -36,12 +36,28 @@ namespace RatesProvider.Application.Integrations
 
                 var currencyRate = new CurrencyRateResponse
                 {
-                    BaseCurrency = Enum.Parse<Currences>(response.Base),
-                    Rates = response.Rates,
+                    BaseCurrency = Enum.Parse<Currency>(response.Base),
+                    Rates = new Dictionary<string, decimal>(),
                     Date = response.Date,
                 };
 
                 _logger.LogDebug("Parsed currency rate response: {CurrencyRate}", currencyRate);
+
+                var allCurrencies = AvailableCurrencies.AvailableCurrencyList;
+
+                foreach (var rate in response.Rates)
+                {
+                    var baseCurrencyEnum = Enum.Parse<Currency>(response.Base);
+                    if (Enum.TryParse<Currency>(rate.Key, out var parsedTargetCurrencyEnum))
+                    {
+                        if (allCurrencies.Contains(parsedTargetCurrencyEnum))
+                        {
+                            var currencyPair = $"{baseCurrencyEnum}{parsedTargetCurrencyEnum}";
+                            currencyRate.Rates[currencyPair] = rate.Value;
+                        }
+                    }
+
+                }
                 return currencyRate;
             }
             catch (Exception ex)
@@ -49,7 +65,6 @@ namespace RatesProvider.Application.Integrations
                 _logger.LogError(ex, "Error occurred while fetching currency rates from Fixer API.");
                 throw ex;
             }
-
         }
     }
 }

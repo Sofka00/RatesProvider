@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RatesProvider.Application.Models
 {
-   public enum Currences
+   public enum Currency
     {
         Unknown = 0,
         RUB, // Russian Ruble

@@ -33,6 +33,7 @@ namespace RatesProvider.Application.Services
                 {
                     _logger.LogInformation("Attempting to fetch currency rates, attempt {AttemptNumber}/3", i + 1);
                     response = await _currencyRateProvider.GetCurrencyRatesAsync();
+                    return response;
 
                 }
                 catch (Exception ex)
@@ -42,8 +43,8 @@ namespace RatesProvider.Application.Services
 
                 }
             }
-            _logger.LogError("All attempts to fetch currency rates failed.");
-            return response;
+
+            throw new Exception("All attempts to fetch currency rates failed.");
         }
     }
 }
