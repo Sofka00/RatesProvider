@@ -27,7 +27,6 @@ public class OpenExchangeRatesClientTests
     [Fact]
     public async Task GetCurrencyRatesAsync_SuccessfulResponse_ReturnsCurrencyRateResponse()
     {
-        // Arrange
         var currencyResponse = new OpenExchangeRatesResponse
         {
             Base = "USD",
@@ -44,10 +43,9 @@ public class OpenExchangeRatesClientTests
 
         var client = new OpenExchangeRatesClient(_openExchangeRatesSettings.Object, _commonHttpClient.Object, _logger.Object);
 
-        // Act
+        
         var result = await client.GetCurrencyRatesAsync();
 
-        // Assert
         Assert.NotNull(result);
         Assert.Equal(Currency.USD, result.BaseCurrency);
         Assert.Contains("USDEUR", result.Rates.Keys);
@@ -59,7 +57,7 @@ public class OpenExchangeRatesClientTests
     [Fact]
     public async Task GetCurrencyRatesAsync_InvalidCurrency_LogsError()
     {
-        // Arrange
+      
         var expectedResponse = new OpenExchangeRatesResponse
         {
             Base = "USD",
@@ -75,12 +73,12 @@ public class OpenExchangeRatesClientTests
 
         var client = new OpenExchangeRatesClient(_openExchangeRatesSettings.Object, _commonHttpClient.Object, _logger.Object);
 
-        // Act
+      
         var result = await client.GetCurrencyRatesAsync();
 
-        // Assert
+   
         Assert.NotNull(result);
         Assert.Equal(Currency.USD, result.BaseCurrency);
-        Assert.Empty(result.Rates); // Если валюта недопустима, ожидаем получить пустой словарь.
+        Assert.Empty(result.Rates); 
     }
 }
