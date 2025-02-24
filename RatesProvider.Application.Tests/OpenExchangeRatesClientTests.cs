@@ -25,7 +25,7 @@ public class OpenExchangeRatesClientTests
     }
 
     [Fact]
-    public async Task GetCurrencyRatesAsync_SuccessfulResponse_ReturnsCurrencyRateResponse()
+    public async Task GetCurrencyRatesAsync_SuccessfulResponse_ReturnsCurrencyRateMessage()
     {
         var currencyResponse = new OpenExchangeRatesResponse
         {

@@ -25,7 +25,7 @@ public class CurrencyApiClientTests
     }
 
     [Fact]
-    public async Task GetCurrencyRatesAsync_SuccessfulResponse_ReturnsCurrencyRateResponse()
+    public async Task GetCurrencyRatesAsync_SuccessfulResponse_ReturnsCurrencyRateMessage()
     {
         var currencyResponse = new CurrencyResponse
         {
@@ -55,7 +55,7 @@ public class CurrencyApiClientTests
     }
 
     [Fact]
-    public async Task GetCurrencyRatesAsync_NoCNYKey_ReturnsCurrencyRateResponseWithoutCNY()
+    public async Task GetCurrencyRatesAsync_NoCNYKey_ReturnsCurrencyRateMessageWithoutCNY()
     {
         // Arrange
         var currencyResponse = new CurrencyResponse
@@ -85,7 +85,7 @@ public class CurrencyApiClientTests
     }
 
     [Fact]
-    public async Task GetCurrencyRatesAsync_MissingCurrencyData_ReturnsCurrencyRateResponseWithMissingCurrencies()
+    public async Task GetCurrencyRatesAsync_MissingCurrencyData_ReturnsCurrencyRateMessageWithMissingCurrencies()
     {
         // Arrange
         _commonHttpClient.Setup(x => x.SendRequestAsync<CurrencyResponse>(It.IsAny<string>()))

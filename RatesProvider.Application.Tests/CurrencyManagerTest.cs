@@ -16,7 +16,7 @@ namespace CurrencyRateManagerTests
             var mockLogger = new Mock<ILogger<CurrencyRateManager>>();
             var mockBus = new Mock<IBus>();
 
-            var fakeRates = new CurrencyRateResponse
+            var fakeRates = new CurrencyRateMessage
             {
                 BaseCurrency = Currency.USD,
                 Rates = new Dictionary<string, decimal>
@@ -45,7 +45,7 @@ namespace CurrencyRateManagerTests
             Assert.NotNull(result);
 
             mockBus.Verify(bus => bus.Publish(
-                It.Is<CurrencyRateResponse>(msg =>
+                It.Is<CurrencyRateMessage>(msg =>
                     msg.BaseCurrency == Currency.USD &&
                     msg.Rates.ContainsKey("USD") &&
                     msg.Rates["RUB"] == 0.85m),

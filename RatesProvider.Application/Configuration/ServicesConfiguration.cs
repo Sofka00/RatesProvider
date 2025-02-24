@@ -1,10 +1,8 @@
+using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using RatesProvider.Application.Integrations;
 using RatesProvider.Application.Interfaces;
-using RatesProvider.Application.Models;
 using RatesProvider.Application.Services;
-using MassTransit;
-using RatesProvider.Application.Models;
 
 namespace RatesProvider.Application.Configuration;
 
@@ -35,8 +33,8 @@ public static class ServicesConfiguration
         });
     }
 }
-    
-    
+
+
 
 
 

@@ -1,4 +1,5 @@
-﻿using RatesProvider.Application.Models;
+﻿using MYPBackendMicroserviceIntegrations.Enums;
+using RatesProvider.Application.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

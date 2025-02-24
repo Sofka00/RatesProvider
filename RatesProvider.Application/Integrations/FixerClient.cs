@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MYPBackendMicroserviceIntegrations.Enums;
+using MYPBackendMicroserviceIntegrations.Messages;
 using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
@@ -20,7 +22,7 @@ namespace RatesProvider.Application.Integrations
             _commonHttpClient = ratesProviderHttpRequest;
             _logger = logger;
         }
-        public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
+        public async Task<CurrencyRateMessage> GetCurrencyRatesAsync()
         {
             var url = $"https://data.fixer.io/api/latest?access_key={_fixerClienSettings.ApiKey}";
             try
@@ -34,7 +36,7 @@ namespace RatesProvider.Application.Integrations
 
                 _logger.LogDebug("Response content from Fixer API: {ResponseContent}", response);
 
-                var currencyRate = new CurrencyRateResponse
+                var currencyRate = new CurrencyRateMessage
                 {
                     BaseCurrency = Enum.Parse<Currency>(response.Base),
                     Rates = new Dictionary<string, decimal>(),
