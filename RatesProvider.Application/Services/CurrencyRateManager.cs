@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RatesProvider.Application.Interfaces;
@@ -11,14 +12,15 @@ public class CurrencyRateManager : ICurrencyRateManager
     private readonly ICurrencyRateProvider _providerCurrencyApi;
     private readonly ICurrencyRateProvider _providerOpenExchangeRates;
     private IRatesProviderContext _context;
+    private readonly IBus _bus;
     private readonly ILogger _logger;
 
     public CurrencyRateManager(IRatesProviderContext context,
         [FromKeyedServices("Fixer")] ICurrencyRateProvider providerFixer,
         [FromKeyedServices("CurrencyApi")] ICurrencyRateProvider providerCurrencyApi,
         [FromKeyedServices("OpenExchangeRates")] ICurrencyRateProvider providerOpenExchangeRates,
-         ILogger<CurrencyRateManager> logger
-        )
+         ILogger<CurrencyRateManager> logger,
+        IBus bus)
     {
 
         _providerOpenExchangeRates = providerOpenExchangeRates;
@@ -27,8 +29,9 @@ public class CurrencyRateManager : ICurrencyRateManager
         _context = context;
 
         _logger = logger;
+        _bus = bus;
     }
-
+    
     public async Task<CurrencyRateResponse> GetRatesAsync()
     {
         CurrencyRateResponse result = default;
@@ -36,8 +39,8 @@ public class CurrencyRateManager : ICurrencyRateManager
 
         try
         {
-            _logger.LogInformation("Setting the currency rate provider to {ProviderType}".GetType().Name);
-            _context.SetCurrencyRatesProvider(_providerFixer);
+            _logger.LogInformation("Setting the currency rate provider to {ProviderType}", _providerOpenExchangeRates.GetType().Name);
+            _context.SetCurrencyRatesProvider(_providerOpenExchangeRates);
 
             _logger.LogInformation("Attempting to retrieve currency rates...");
 
@@ -61,6 +64,7 @@ public class CurrencyRateManager : ICurrencyRateManager
 
         }
 
+        await _bus.Publish(result);
         return result;
     }
 

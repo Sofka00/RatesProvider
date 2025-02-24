@@ -81,6 +81,6 @@ public class OpenExchangeRatesClientTests
         // Assert
         Assert.NotNull(result);
         Assert.Equal(Currency.USD, result.BaseCurrency);
-        Assert.Empty(result.Rates); // Если валюта недопустима, ожидаем получить пустой словарь.
+        Assert.Empty(result.Rates); 
     }
 }
