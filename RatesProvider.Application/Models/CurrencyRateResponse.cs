@@ -1,4 +1,4 @@
-﻿namespace RatesProvider.Application.Models;
+namespace RatesProvider.Application.Models;
 
 public class CurrencyRateResponse
 {
@@ -6,3 +6,4 @@ public class CurrencyRateResponse
     public Dictionary<string, decimal> Rates { get; set; }
     public DateTime Date { get; set; }
 }
+ 

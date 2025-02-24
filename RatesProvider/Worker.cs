@@ -1,10 +1,12 @@
 using RatesProvider.Application.Interfaces;
+using RatesProvider.Application.Models;
 
 
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
     private readonly ICurrencyRateManager _currencyRateManager;
+
     public Worker(ILogger<Worker> logger, ICurrencyRateManager currencyRateManager)
     {
         _logger = logger;
@@ -22,3 +24,4 @@ public class Worker : BackgroundService
         }
     }
 }
+
