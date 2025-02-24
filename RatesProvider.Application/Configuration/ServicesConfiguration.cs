@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using RatesProvider.Application.Integrations;
 using RatesProvider.Application.Interfaces;
+using RatesProvider.Application.Models;
 using RatesProvider.Application.Services;
+using System.Net.Http;
 
 namespace RatesProvider.Application.Configuration;
 
@@ -14,7 +16,8 @@ public static class ServicesConfiguration
         services.AddKeyedSingleton<ICurrencyRateProvider, CurrencyApiClient>("CurrencyApi");
         services.AddKeyedSingleton<ICurrencyRateProvider, OpenExchangeRatesClient>("OpenExchangeRates");
         services.AddSingleton<IRatesProviderContext, RatesProviderContext>();
-        services.AddSingleton<ICommonHttpClient, CommonHttpClient>();
-        services.AddHttpClient(); 
+        services.AddHttpClient<ICommonHttpClient, CommonHttpClient>();
+
+
     }
 }
