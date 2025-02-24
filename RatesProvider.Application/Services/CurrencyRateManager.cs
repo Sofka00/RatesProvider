@@ -69,6 +69,7 @@ public class CurrencyRateManager : ICurrencyRateManager
         }
 
         _logger.LogError("Failed to retrieve currency rates from all providers.");
+        await _bus.Publish(result);
         return result; 
     }
 }
@@ -76,9 +77,8 @@ public class CurrencyRateManager : ICurrencyRateManager
 
 
 
-        await _bus.Publish(result);
-        return result;
-    }
+
+    
 
 
 
