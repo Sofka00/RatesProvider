@@ -33,6 +33,10 @@ namespace RatesProvider.Application.Services
                 {
                     _logger.LogInformation("Attempting to fetch currency rates, attempt {AttemptNumber}/3", i + 1);
                     response = await _currencyRateProvider.GetCurrencyRatesAsync();
+                    if (response!=null)
+                    {
+                        break;
+                    }
 
                 }
                 catch (Exception ex)

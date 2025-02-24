@@ -35,7 +35,7 @@ public class CurrencyRateManager : ICurrencyRateManager
     public async Task<CurrencyRateResponse> GetRatesAsync()
     {
         CurrencyRateResponse result = default;
-        _context.SetCurrencyRatesProvider(_providerOpenExchangeRates);
+        _context.SetCurrencyRatesProvider(_providerFixer);
 
         try
         {

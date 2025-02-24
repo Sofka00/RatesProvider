@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using RatesProvider.Application.Interfaces;
+using RatesProvider.Application.Models;
 using System.Text.Json;
 
 namespace RatesProvider.Application.Integrations;

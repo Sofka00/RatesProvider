@@ -4,6 +4,7 @@ using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
 using RatesProvider.Application.Models.FixerApiModels;
+using System.Data;
 
 namespace RatesProvider.Application.Integrations
 {
@@ -36,11 +37,27 @@ namespace RatesProvider.Application.Integrations
                 var currencyRate = new CurrencyRateResponse
                 {
                     BaseCurrency = Enum.Parse<Currency>(response.Base),
-                    Rates = response.Rates,
+                    Rates = new Dictionary<string, decimal>(),
                     Date = response.Date,
                 };
 
                 _logger.LogDebug("Parsed currency rate response: {CurrencyRate}", currencyRate);
+
+                var allCurrencies = AvailableCurrencies.AvailableCurrencyList;
+
+                foreach (var rate in response.Rates)
+                {
+                    var baseCurrencyEnum = Enum.Parse<Currency>(response.Base);
+                    if (Enum.TryParse<Currency>(rate.Key, out var parsedTargetCurrencyEnum))
+                    {
+                        if (allCurrencies.Contains(parsedTargetCurrencyEnum))
+                        {
+                            var currencyPair = $"{baseCurrencyEnum}{parsedTargetCurrencyEnum}";
+                            currencyRate.Rates[currencyPair] = rate.Value;
+                        }
+                    }
+
+                }
                 return currencyRate;
             }
             catch (Exception ex)
@@ -48,7 +65,9 @@ namespace RatesProvider.Application.Integrations
                 _logger.LogError(ex, "Error occurred while fetching currency rates from Fixer API.");
                 throw ex;
             }
-
         }
     }
+
 }
+
+
