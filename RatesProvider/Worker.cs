@@ -28,12 +28,11 @@ public class Worker : BackgroundService
             }
             catch (Exception ex)
             {
-
                 _logger.LogError(ex, "Error fetching rates, switching provider...");
                 _currencyRateManager.SetNextProvider();
-                continue;
+                await _currencyRateManager.GetRatesAsync();
+
             }
-            await _currencyRateManager.GetRatesAsync();
             await Task.Delay(TimeSpan.FromSeconds(10));
         }
     }

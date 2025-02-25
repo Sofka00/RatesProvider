@@ -35,7 +35,7 @@ public class CurrencyRateManager : ICurrencyRateManager
 
     public async Task<CurrencyRateMessage> GetRatesAsync()
     {
-        _context.SetCurrencyRatesProvider(_providers[CurrentProviderId]);
+      
         var result = await _context.GetRatesAsync();
         if (result?.Rates.Any() == true)
         {
