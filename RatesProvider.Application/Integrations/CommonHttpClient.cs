@@ -1,7 +1,5 @@
 using Microsoft.Extensions.Logging;
 using RatesProvider.Application.Exeptions;
-using RatesProvider.Application.Interfaces;
-using RatesProvider.Application.Models;
 using System.Net;
 using System.Text.Json;
 
@@ -16,10 +14,9 @@ public class CommonHttpClient : ICommonHttpClient
     {
         _client = client;
         _logger = logger;
-        _client.Timeout = TimeSpan.FromSeconds(30);
     }
 
-    public async Task<T> SendRequestAsync<T>(string url, CancellationToken cancellationToken = default)
+    public async Task<T> SendRequestAsync<T>(string url)
     {
         T result = default(T);
         TimeSpan interval = new TimeSpan(0, 0, 2);
@@ -27,7 +24,7 @@ public class CommonHttpClient : ICommonHttpClient
         try
         {
             _logger.LogInformation("Sending GET request to URL: {Url}", url);
-            using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
 
             _logger.LogDebug("Received response with status code {StatusCode} from URL: {Url}", response.StatusCode, url);
             response.EnsureSuccessStatusCode();

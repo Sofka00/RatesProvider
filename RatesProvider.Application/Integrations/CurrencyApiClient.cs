@@ -4,7 +4,6 @@ using MYPBackendMicroserviceIntegrations.Enums;
 using MYPBackendMicroserviceIntegrations.Messages;
 using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Interfaces;
-using RatesProvider.Application.Models;
 using RatesProvider.Application.Models.CurrencyApiModels;
 
 namespace RatesProvider.Application.Integrations;
@@ -58,11 +57,6 @@ public class CurrencyApiClient : ICurrencyRateProvider
         var rates = new Dictionary<string, decimal>();
 
         rates.Add(baseCurrency.ToString() + baseCurrency.ToString(), 1);
-
-        if (response.Data == null || response.Data.RUB == null)
-        {
-            throw new InvalidOperationException("RUB data is missing in the response.");
-        }
 
         if (response.Data.RUB != null)
         {

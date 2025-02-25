@@ -1,8 +1,7 @@
 using Microsoft.Extensions.Logging;
-using RatesProvider.Application.Exeptions;
 using MYPBackendMicroserviceIntegrations.Messages;
+using RatesProvider.Application.Exeptions;
 using RatesProvider.Application.Interfaces;
-using RatesProvider.Application.Models;
 
 namespace RatesProvider.Application.Services;
 
@@ -14,7 +13,7 @@ public class RatesProviderContext : IRatesProviderContext
     public RatesProviderContext(ILogger<RatesProviderContext> logger)
     {
         _currencyRateProvider = null;
-        _logger = logger;   
+        _logger = logger;
     }
 
     public void SetCurrencyRatesProvider(ICurrencyRateProvider currencyRateProvider)
@@ -25,41 +24,33 @@ public class RatesProviderContext : IRatesProviderContext
         }
 
         _currencyRateProvider = currencyRateProvider;
-        _logger.LogInformation("CurrencyRateProvider has been set to: {ProviderType}", _currencyRateProvider.GetType().Name);   
+        _logger.LogInformation("CurrencyRateProvider has been set to: {ProviderType}", _currencyRateProvider.GetType().Name);
     }
 
-    public async Task<CurrencyRateResponse> GetRatesAsync()
+    public async Task<CurrencyRateMessage> GetRatesAsync()
     {
         if (_currencyRateProvider == null)
         {
             throw new InvalidOperationException("CurrencyRateProvider is not set.");
         }
 
-        public async Task<CurrencyRateMessage> GetRatesAsync()
+        CurrencyRateMessage response = default;
+        TimeSpan interval = new TimeSpan(0, 0, 2);
+
+        for (int i = 0; i < 3; i++)
         {
-            CurrencyRateMessage response = default;
-            TimeSpan interval = new TimeSpan(0, 0, 2);
-
-            for (int i = 0; i < 3; i++)
+            try
             {
-                try
-                {
-                    _logger.LogInformation("Attempting to fetch currency rates, attempt {AttemptNumber}/3", i + 1);
-                    response = await _currencyRateProvider.GetCurrencyRatesAsync();
-                    return response;
-
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Failed to fetch currency rates on attempt {AttemptNumber}/3. Retrying in {Delay} seconds.", i + 1, interval.TotalSeconds);
-                    await Task.Delay(interval * i);
-
-                }
+                _logger.LogInformation("Attempting to fetch currency rates, attempt {AttemptNumber}/3", i + 1);
+                response = await _currencyRateProvider.GetCurrencyRatesAsync();
+                return response;
             }
-            throw new Exception("All attempts to fetch currency rates failed.");
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to fetch currency rates on attempt {AttemptNumber}/3. Retrying in {Delay} seconds.", i + 1, interval.TotalSeconds);
+                await Task.Delay(interval * i);
+            }
         }
-
-
-        throw new ClientAttemptsExceededException("All attempts to fetch currency rates failed.");
-    }
+        throw new ClientAttemptsExceededException("All attempts to fetch currency rates failed");
+    }   
 }

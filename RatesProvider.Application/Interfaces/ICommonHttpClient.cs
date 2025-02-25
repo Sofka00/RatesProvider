@@ -4,6 +4,6 @@ namespace RatesProvider.Application.Integrations
 {
     public interface ICommonHttpClient
     {
-        Task<T> SendRequestAsync<T>(string url, CancellationToken cancellationToken = default);
+        Task<T> SendRequestAsync<T>(string url);
     }
 }
