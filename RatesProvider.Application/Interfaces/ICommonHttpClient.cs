@@ -2,6 +2,6 @@
 {
     public interface ICommonHttpClient
     {
-        Task<T> SendRequestAsync<T>(string url);
+        Task<T> SendRequestAsync<T>(string url, CancellationToken cancellationToken = default);
     }
 }

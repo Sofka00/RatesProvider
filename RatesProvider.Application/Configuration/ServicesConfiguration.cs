@@ -14,7 +14,6 @@ public static class ServicesConfiguration
         services.AddKeyedSingleton<ICurrencyRateProvider, CurrencyApiClient>("CurrencyApi");
         services.AddKeyedSingleton<ICurrencyRateProvider, OpenExchangeRatesClient>("OpenExchangeRates");
         services.AddSingleton<IRatesProviderContext, RatesProviderContext>();
-        services.AddSingleton<ICommonHttpClient, CommonHttpClient>();
-        services.AddHttpClient(); 
+        services.AddHttpClient<ICommonHttpClient, CommonHttpClient>();
     }
 }

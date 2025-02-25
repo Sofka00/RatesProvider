@@ -46,11 +46,21 @@ public class CurrencyApiClient : ICurrencyRateProvider
 
     private CurrencyRateResponse ConvertCurrencyApiToCurrencyRates(CurrencyResponse response)
     {
+        if (response == null)
+        {
+            throw new ArgumentNullException(nameof(response), "Response from the currency API cannot be null.");
+        }
+
         var baseCurrency = Currency.USD;
         var date = response.Meta?.LastUpdatedAt ?? DateTime.Now;
         var rates = new Dictionary<string, decimal>();
 
         rates.Add(baseCurrency.ToString() + baseCurrency.ToString(), 1);
+
+        if (response.Data == null || response.Data.RUB == null)
+        {
+            throw new InvalidOperationException("RUB data is missing in the response.");
+        }
 
         if (response.Data.RUB != null)
         {

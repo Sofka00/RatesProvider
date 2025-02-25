@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Logging;
+using RatesProvider.Application.Exeptions;
 using RatesProvider.Application.Interfaces;
+using System.Net;
 using System.Text.Json;
 
 namespace RatesProvider.Application.Integrations;
@@ -13,19 +15,18 @@ public class CommonHttpClient : ICommonHttpClient
     {
         _client = client;
         _logger = logger;
-
+        _client.Timeout = TimeSpan.FromSeconds(30);
     }
 
-    public async Task<T> SendRequestAsync<T>(string url)
+    public async Task<T> SendRequestAsync<T>(string url, CancellationToken cancellationToken = default)
     {
         T result = default(T);
         TimeSpan interval = new TimeSpan(0, 0, 2);
 
         try
         {
-
             _logger.LogInformation("Sending GET request to URL: {Url}", url);
-            using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
             _logger.LogDebug("Received response with status code {StatusCode} from URL: {Url}", response.StatusCode, url);
             response.EnsureSuccessStatusCode();
@@ -35,14 +36,28 @@ public class CommonHttpClient : ICommonHttpClient
 
             _logger.LogDebug("Response content: {JsonContent}", json);
             result = JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            if (result == null)
+            {
+                throw new InvalidOperationException("Deserialized result is null.");
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            if (ex.StatusCode == HttpStatusCode.NotFound || ex.StatusCode == HttpStatusCode.Unauthorized || ex.StatusCode == HttpStatusCode.Forbidden)
+            {
+                throw new WrongConfigurationException("Error occurred while getting the base address");
+            }
+            _logger.LogError(ex, "HTTP error occurred while sending request to {Url}", url);
+            throw;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error occurred while sending request to {Url}", url);
+            throw;
         }
 
         return result;
     }
-
 }
 
