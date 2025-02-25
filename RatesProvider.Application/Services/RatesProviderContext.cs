@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using RatesProvider.Application.Exeptions;
+using MYPBackendMicroserviceIntegrations.Messages;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
 
@@ -34,22 +35,31 @@ public class RatesProviderContext : IRatesProviderContext
             throw new InvalidOperationException("CurrencyRateProvider is not set.");
         }
 
-        CurrencyRateResponse response = default;
-        TimeSpan interval = new TimeSpan(0, 0, 2);
-
-        for (int i = 0; i < 3; i++)
+        public async Task<CurrencyRateMessage> GetRatesAsync()
         {
-            try
+            CurrencyRateMessage response = default;
+            TimeSpan interval = new TimeSpan(0, 0, 2);
+
+            for (int i = 0; i < 3; i++)
             {
-                _logger.LogInformation("Attempting to fetch currency rates, attempt {AttemptNumber}/3", i + 1);
-                response = await _currencyRateProvider.GetCurrencyRatesAsync();
-                return response;
+                try
+                {
+                    _logger.LogInformation("Attempting to fetch currency rates, attempt {AttemptNumber}/3", i + 1);
+                    response = await _currencyRateProvider.GetCurrencyRatesAsync();
+                    return response;
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to fetch currency rates on attempt {AttemptNumber}/3. Retrying in {Delay} seconds.", i + 1, interval.TotalSeconds);
+                    await Task.Delay(interval * i);
+
+                }
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An unexpected error occurred while fetching currency rates on attempt {AttemptNumber}/3.", i + 1);
-            }
+            throw new Exception("All attempts to fetch currency rates failed.");
         }
+
+
         throw new ClientAttemptsExceededException("All attempts to fetch currency rates failed.");
     }
 }

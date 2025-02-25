@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using RatesProvider.Application.Exeptions;
 using RatesProvider.Application.Interfaces;
+using RatesProvider.Application.Models;
 using System.Net;
 using System.Text.Json;
 
