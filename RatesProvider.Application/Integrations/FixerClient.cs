@@ -4,9 +4,7 @@ using MYPBackendMicroserviceIntegrations.Enums;
 using MYPBackendMicroserviceIntegrations.Messages;
 using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Interfaces;
-using RatesProvider.Application.Models;
 using RatesProvider.Application.Models.FixerApiModels;
-using System.Data;
 
 namespace RatesProvider.Application.Integrations
 {
@@ -58,8 +56,8 @@ namespace RatesProvider.Application.Integrations
                             currencyRate.Rates[currencyPair] = rate.Value;
                         }
                     }
-
                 }
+
                 return currencyRate;
             }
             catch (Exception ex)
@@ -69,7 +67,4 @@ namespace RatesProvider.Application.Integrations
             }
         }
     }
-
 }
-
-

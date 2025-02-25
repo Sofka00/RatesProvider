@@ -4,7 +4,6 @@ using MYPBackendMicroserviceIntegrations.Enums;
 using MYPBackendMicroserviceIntegrations.Messages;
 using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Interfaces;
-using RatesProvider.Application.Models;
 using RatesProvider.Application.Models.CurrencyApiModels;
 
 namespace RatesProvider.Application.Integrations;
@@ -48,6 +47,11 @@ public class CurrencyApiClient : ICurrencyRateProvider
 
     private CurrencyRateMessage ConvertCurrencyApiToCurrencyRates(CurrencyResponse response)
     {
+        if (response == null)
+        {
+            throw new ArgumentNullException(nameof(response), "Response from the currency API cannot be null.");
+        }
+
         var baseCurrency = Currency.USD;
         var date = response.Meta?.LastUpdatedAt ?? DateTime.Now;
         var rates = new Dictionary<string, decimal>();

@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Logging.Configuration;
-using Microsoft.Extensions.Logging.EventLog;
 using RatesProvider.Application.Configuration;
 using Serilog;
 
@@ -8,7 +6,6 @@ var builder = Host.CreateApplicationBuilder(args);
 Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(builder.Configuration)
                 .CreateLogger();
-
 
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
@@ -26,10 +23,9 @@ if (builder.Environment.IsDevelopment())
     builder.Configuration.AddUserSecrets<Program>();
 }
 
-builder.Services.Configure<OpenExchangeRatesClientSettings>(builder.Configuration.GetSection("OpenExchangeClient")); 
+builder.Services.Configure<OpenExchangeRatesClientSettings>(builder.Configuration.GetSection("OpenExchangeClient"));
 builder.Services.Configure<CurrencyApiClientSettings>(builder.Configuration.GetSection("CurrencyApiClient"));
 builder.Services.Configure<FixerClientSettings>(builder.Configuration.GetSection("FixerClient"));
-Console.WriteLine(builder.Configuration.GetDebugView());
 builder.Services.AddHostedService<Worker>();
 builder.Services.AddApplicationServices();
 
@@ -48,4 +44,3 @@ finally
 {
     Log.CloseAndFlush();
 }
-

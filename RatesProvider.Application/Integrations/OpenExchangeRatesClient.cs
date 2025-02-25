@@ -4,7 +4,6 @@ using MYPBackendMicroserviceIntegrations.Enums;
 using MYPBackendMicroserviceIntegrations.Messages;
 using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Interfaces;
-using RatesProvider.Application.Models;
 using RatesProvider.Application.Models.OpenExchangeRatesModels;
 
 namespace RatesProvider.Application.Integrations;
@@ -16,8 +15,8 @@ public class OpenExchangeRatesClient : ICurrencyRateProvider
     private readonly ILogger<OpenExchangeRatesClient> _logger;
 
     public OpenExchangeRatesClient(
-        IOptions<OpenExchangeRatesClientSettings> openExchangeSettings, 
-        ICommonHttpClient ratesProviderHttpRequest, 
+        IOptions<OpenExchangeRatesClientSettings> openExchangeSettings,
+        ICommonHttpClient ratesProviderHttpRequest,
         ILogger<OpenExchangeRatesClient> logger)
     {
         _openExchangeRatesSettings = openExchangeSettings.Value;
@@ -33,13 +32,7 @@ public class OpenExchangeRatesClient : ICurrencyRateProvider
             var response = await _commonHttpClient.SendRequestAsync<OpenExchangeRatesResponse>(url);
             _logger.LogDebug("Response content from OpenExchangeRates API: {ResponseContent}", response);
 
-            _logger.LogDebug("Response content from Fixer API: {ResponseContent}", response);
-            var currencyRate = new CurrencyRateMessage
-            {
-                BaseCurrency = Enum.Parse<Currency>(response.Base),
-                Rates = response.Rates,
-                Date = response.Date,
-            };
+            var currencyRate = ConvertOpenExcangeRatesToCurrencyRates(response);
             _logger.LogDebug("Parsed currency rate response: {CurrencyRate}", currencyRate);
 
             return currencyRate;
@@ -53,7 +46,17 @@ public class OpenExchangeRatesClient : ICurrencyRateProvider
 
     private CurrencyRateMessage ConvertOpenExcangeRatesToCurrencyRates(OpenExchangeRatesResponse response)
     {
-        var CurrencyRateMessage = new CurrencyRateMessage
+        if (response == null)
+        {
+            throw new ArgumentNullException(nameof(response), "Response cannot be null.");
+        }
+
+        if (response.Rates == null || !response.Rates.Any())
+        {
+            throw new InvalidOperationException("No currency rates available in the response.");
+        }
+
+        var currencyRateMessage = new CurrencyRateMessage
         {
             BaseCurrency = Currency.USD,
             Rates = new Dictionary<string, decimal>(),
@@ -66,15 +69,16 @@ public class OpenExchangeRatesClient : ICurrencyRateProvider
             if (Enum.TryParse<Currency>(rate.Key, out var currency))
             {
                 string currencyPair = $"{response.Base}{rate.Key}";
-                CurrencyRateMessage.Rates[currencyPair] = rate.Value;
+                currencyRateMessage.Rates[currencyPair] = rate.Value;
                 _logger.LogDebug("Added currency pair: {CurrencyPair}, exchange rate: {Rate}", currencyPair, rate.Value);
             }
             else
             {
-                _logger.LogError("Could not parse key '{rate.Key}' into a valid Currency enum value.", rate.Key);
+                _logger.LogDebug("Failed to fetch currency rates");
             }
         }
 
-        return CurrencyRateMessage;
+        _logger.LogDebug("Parsed currency rate response: {CurrencyRate}", currencyRateMessage);
+        return currencyRateMessage;
     }
 }

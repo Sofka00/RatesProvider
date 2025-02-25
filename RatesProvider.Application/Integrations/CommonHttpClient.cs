@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
-using RatesProvider.Application.Interfaces;
-using RatesProvider.Application.Models;
+using RatesProvider.Application.Exeptions;
+using System.Net;
 using System.Text.Json;
 
 namespace RatesProvider.Application.Integrations;
@@ -14,7 +14,6 @@ public class CommonHttpClient : ICommonHttpClient
     {
         _client = client;
         _logger = logger;
-
     }
 
     public async Task<T> SendRequestAsync<T>(string url)
@@ -24,7 +23,6 @@ public class CommonHttpClient : ICommonHttpClient
 
         try
         {
-
             _logger.LogInformation("Sending GET request to URL: {Url}", url);
             using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
 
@@ -36,14 +34,28 @@ public class CommonHttpClient : ICommonHttpClient
 
             _logger.LogDebug("Response content: {JsonContent}", json);
             result = JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            if (result == null)
+            {
+                throw new InvalidOperationException("Deserialized result is null.");
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            if (ex.StatusCode == HttpStatusCode.NotFound || ex.StatusCode == HttpStatusCode.Unauthorized || ex.StatusCode == HttpStatusCode.Forbidden)
+            {
+                throw new WrongConfigurationException("Error occurred while getting the base address");
+            }
+            _logger.LogError(ex, "HTTP error occurred while sending request to {Url}", url);
+            throw;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error occurred while sending request to {Url}", url);
+            throw;
         }
 
         return result;
     }
-
 }
 

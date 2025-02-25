@@ -1,7 +1,6 @@
 using MassTransit;
+using RatesProvider.Application.Exeptions;
 using RatesProvider.Application.Interfaces;
-using RatesProvider.Application.Models;
-
 
 public class Worker : BackgroundService
 {
@@ -14,7 +13,6 @@ public class Worker : BackgroundService
         _logger = logger;
         _currencyRateManager = currencyRateManager;
         _bus = bus;
-      
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -26,14 +24,26 @@ public class Worker : BackgroundService
             {
                 await _currencyRateManager.GetRatesAsync();
             }
-            catch (Exception ex)
+            catch (ClientAttemptsExceededException ex)
             {
-                _logger.LogError(ex, "Error fetching rates, switching provider...");
+                _logger.LogError(ex.Message);
                 _currencyRateManager.SetNextProvider();
                 await _currencyRateManager.GetRatesAsync();
-
             }
-            await Task.Delay(TimeSpan.FromSeconds(10));
+            catch (WrongConfigurationException ex)
+            {
+                _logger.LogCritical(ex.Message);
+                _currencyRateManager.SetNextProvider();
+                await _currencyRateManager.GetRatesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+            finally
+            {
+                await Task.Delay(TimeSpan.FromMinutes(1));
+            }
         }
     }
 }
