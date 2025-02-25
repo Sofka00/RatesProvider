@@ -1,9 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using MassTransit;
+using Microsoft.Extensions.Logging;
 using Moq;
-using MYPBackendMicroserviceIntegrations.Enums;
 using MYPBackendMicroserviceIntegrations.Messages;
 using RatesProvider.Application.Interfaces;
-using RatesProvider.Application.Models;
 using RatesProvider.Application.Services;
 
 namespace RatesProvider.Application.Tests
@@ -15,7 +14,8 @@ namespace RatesProvider.Application.Tests
         private readonly Mock<ICurrencyRateProvider> _mockProviderCurrencyApi;
         private readonly Mock<ICurrencyRateProvider> _mockProviderOpenExchangeRates;
         private readonly Mock<ILogger<CurrencyRateManager>> _mockLogger;
-
+        private readonly Mock<IBus> _mockBus;
+        private readonly CurrencyRateManager _manager;
         public CurrencyRateManagerTest()
         {
             _mockContext = new Mock<IRatesProviderContext>();
@@ -23,98 +23,60 @@ namespace RatesProvider.Application.Tests
             _mockProviderCurrencyApi = new Mock<ICurrencyRateProvider>();
             _mockProviderOpenExchangeRates = new Mock<ICurrencyRateProvider>();
             _mockLogger = new Mock<ILogger<CurrencyRateManager>>();
+            _mockBus = new Mock<IBus>();
+
+            _manager = new CurrencyRateManager(
+               _mockContext.Object,
+               _mockProviderFixer.Object,
+               _mockProviderCurrencyApi.Object,
+               _mockProviderOpenExchangeRates.Object,
+               _mockLogger.Object,
+               _mockBus.Object
+            );
         }
         [Fact]
-        public async Task GetRatesAsync_ShouldReturnRates_WhenFirstProviderSucceeds()
+        public async Task GetRatesAsync_ShouldReturnRates_WhenProviderSucceeds()
         {
 
-            var expectedRates = new CurrencyRateMessage
+            var fakeResponse = new CurrencyRateMessage
             {
-                BaseCurrency = Currency.USD,
-                Rates = new Dictionary<string, decimal> { { "USDEUR", 0.85m } },
-                Date = DateTime.UtcNow
+                Rates = new Dictionary<string, decimal> { { "USD", 1.1m } }
             };
 
-            _mockContext.Setup(ctx => ctx.GetRatesAsync()).ReturnsAsync(expectedRates);
+            _mockContext.Setup(c => c.GetRatesAsync()).ReturnsAsync(fakeResponse);
 
-            //var manager = new CurrencyRateMessage(
-            //    _mockContext.Object,
-            //    _mockProviderFixer.Object,
-            //    _mockProviderCurrencyApi.Object,
-            //    _mockProviderOpenExchangeRates.Object,
-            //    _mockLogger.Object
-            //);
+            var result = await _manager.GetRatesAsync();
 
-
-            ////var result = await manager.GetRatesAsync();
-
-
-            //Assert.NotNull(result);
-            //Assert.Equal(Currency.USD, result.BaseCurrency);
-            //Assert.Contains("USDEUR", result.Rates);
-            //Assert.Equal(0.85m, result.Rates["USDEUR"]);
+            Assert.NotNull(result);
+            Assert.NotEmpty(result.Rates);
+            _mockBus.Verify(bus => bus.Publish(fakeResponse, default), Times.Once);
         }
 
         [Fact]
-        public async Task GetRatesAsync_ShouldFallbackToNextProvider_WhenFirstFails()
+        public async Task GetRatesAsync_ShouldThrowException_WhenProviderFails()
         {
-            var failedResponse = new CurrencyRateMessage { BaseCurrency = Currency.USD, Rates = new Dictionary<string, decimal>() };
-            var expectedRates = new CurrencyRateMessage
-            {
-                BaseCurrency = Currency.USD,
-                Rates = new Dictionary<string, decimal> { { "EUR", 1.05m } },
-                Date = DateTime.UtcNow
-            };
+            _mockContext.Setup(c => c.GetRatesAsync()).ReturnsAsync((CurrencyRateMessage)null);
 
-            _mockContext
-                .SetupSequence(ctx => ctx.GetRatesAsync())
-                .ReturnsAsync(failedResponse)
-                .ReturnsAsync(expectedRates);
-
-
-            //var manager = new CurrencyRateManager(
-            //    _mockContext.Object,
-            //    _mockProviderFixer.Object,
-            //    _mockProviderCurrencyApi.Object,
-            //    _mockProviderOpenExchangeRates.Object,
-            //    _mockLogger.Object
-            //);
-
-            //var result = await manager.GetRatesAsync();
-
-            //Assert.NotNull(result);
-            //Assert.Equal(Currency.USD, result.BaseCurrency);
-            //Assert.Contains("EUR", result.Rates);
-            //Assert.Equal(1.05m, result.Rates["EUR"]);
+            await Assert.ThrowsAsync<Exception>(() => _manager.GetRatesAsync());
         }
 
-        public async Task GetRatesAsync_ShouldReturnNull_WhenAllProvidersFail()
+        [Fact]
+        public void SetNextProvider_ShouldSwitchProvidersCorrectly()
         {
 
-            _mockContext.Setup(ctx => ctx.GetRatesAsync()).ReturnsAsync((CurrencyRateMessage)null);
+            Assert.Equal(0, _manager.CurrentProviderId);
 
-            //var manager = new CurrencyRateManager(
-            //    _mockContext.Object,
-            //    _mockProviderFixer.Object,
-            //    _mockProviderCurrencyApi.Object,
-            //    _mockProviderOpenExchangeRates.Object,
-            //    _mockLogger.Object
-            //);
+            _manager.SetNextProvider();
+            Assert.Equal(1, _manager.CurrentProviderId);
 
-            //var result = await manager.GetRatesAsync();
+            _manager.SetNextProvider();
+            Assert.Equal(2, _manager.CurrentProviderId);
 
-            //Assert.Null(result);
-            //_mockLogger.Verify(
-            //    x => x.Log(
-            //        LogLevel.Error,
-            //        It.IsAny<EventId>(),
-            //        It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Failed to retrieve currency rates")),
-            //        It.IsAny<Exception>(),
-            //        It.IsAny<Func<It.IsAnyType, Exception, string>>()),
-            //    Times.Once);
+            _manager.SetNextProvider();
+            Assert.Equal(0, _manager.CurrentProviderId);
         }
+
     }
-
 
 }
 

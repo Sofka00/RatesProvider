@@ -1,10 +1,9 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using MYPBackendMicroserviceIntegrations.Enums;
 using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Integrations;
-using RatesProvider.Application.Interfaces;
-using RatesProvider.Application.Models;
 using RatesProvider.Application.Models.CurrencyApiModels;
 
 namespace RatesProvider.Application.Tests;
@@ -98,12 +97,12 @@ public class CurrencyApiClientTests
                 Data = new Data
                 {
                     RUB = null,
-                    EUR = new CurrencyValue { Code = "EUR", Value = 101.1m }, 
-                    JPY = null, 
-                    CNY = new CurrencyValue { Code = "CNY", Value = 125.5m }, 
-                    RSD = null, 
+                    EUR = new CurrencyValue { Code = "EUR", Value = 101.1m },
+                    JPY = null,
+                    CNY = new CurrencyValue { Code = "CNY", Value = 125.5m },
+                    RSD = null,
                     BGN = new CurrencyValue { Code = "BGN", Value = 145.5m },
-                    ARS = null 
+                    ARS = null
                 }
             });
 
@@ -115,13 +114,13 @@ public class CurrencyApiClientTests
         // Assert
         Assert.NotNull(response);
         Assert.NotNull(response.Rates);
-        Assert.True(response.Rates.ContainsKey("USDUSD")); 
+        Assert.True(response.Rates.ContainsKey("USDUSD"));
         Assert.True(response.Rates.ContainsKey("USDEUR"));
-        Assert.True(response.Rates.ContainsKey("USDCNY")); 
-        Assert.True(response.Rates.ContainsKey("USDBGN")); 
-        Assert.False(response.Rates.ContainsKey("USDRUB")); 
-        Assert.False(response.Rates.ContainsKey("USDJPY")); 
-        Assert.False(response.Rates.ContainsKey("USDRSD")); 
-        Assert.False(response.Rates.ContainsKey("USDARS")); 
+        Assert.True(response.Rates.ContainsKey("USDCNY"));
+        Assert.True(response.Rates.ContainsKey("USDBGN"));
+        Assert.False(response.Rates.ContainsKey("USDRUB"));
+        Assert.False(response.Rates.ContainsKey("USDJPY"));
+        Assert.False(response.Rates.ContainsKey("USDRSD"));
+        Assert.False(response.Rates.ContainsKey("USDARS"));
     }
 }

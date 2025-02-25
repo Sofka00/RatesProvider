@@ -24,7 +24,7 @@ namespace RatesProvider.Application.Integrations
         }
         public async Task<CurrencyRateMessage> GetCurrencyRatesAsync()
         {
-            var url = $"https://data.fixer.io/api/latest?access_key={_fixerClienSettings.ApiKey}";
+            var url = $"{_fixerClienSettings.BaseUrl}{_fixerClienSettings.QueryOption}{_fixerClienSettings.ApiKey}";
             try
             {
                 var response = await _commonHttpClient.SendRequestAsync<FixerResponse>(url.ToString());

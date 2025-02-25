@@ -44,8 +44,6 @@ namespace RatesProvider.Application.Services
 
                 }
             }
-
-
             throw new Exception("All attempts to fetch currency rates failed.");
         }
 

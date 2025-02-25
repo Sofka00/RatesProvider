@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using MYPBackendMicroserviceIntegrations.Enums;
 using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Integrations;
 using RatesProvider.Application.Interfaces;
