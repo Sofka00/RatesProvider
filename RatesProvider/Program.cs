@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging.Configuration;
 using Microsoft.Extensions.Logging.EventLog;
+using RatesProvider.Application;
 using RatesProvider.Application.Configuration;
 using Serilog;
 
@@ -32,6 +33,7 @@ builder.Services.Configure<FixerClientSettings>(builder.Configuration.GetSection
 Console.WriteLine(builder.Configuration.GetDebugView());
 builder.Services.AddHostedService<Worker>();
 builder.Services.AddApplicationServices();
+builder.Services.AddAutoMapper(typeof(CurrencyRatesMapperProfile).Assembly);
 
 var host = builder.Build();
 
