@@ -11,7 +11,7 @@ namespace RatesProvider.Tests
     public class FixerClientTest
     {
         [Fact]
-        public async Task GetCurrencyRatesAsync_ShouldReturnCurrencyRateResponse_WhenResponseIsValid()
+        public async Task GetCurrencyRatesAsync_ShouldReturnCurrencyRateMessage_WhenResponseIsValid()
         {
             var mockOptions = new Mock<IOptions<FixerClientSettings>>();
             mockOptions       .Setup(opt => opt.Value)

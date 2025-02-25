@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MYPBackendMicroserviceIntegrations.Enums;
+using MYPBackendMicroserviceIntegrations.Messages;
 using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
@@ -23,7 +25,7 @@ public class OpenExchangeRatesClient : ICurrencyRateProvider
         _logger = logger;
     }
 
-    public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
+    public async Task<CurrencyRateMessage> GetCurrencyRatesAsync()
     {
         var url = $"{_openExchangeRatesSettings.BaseUrl}{_openExchangeRatesSettings.QueryOption}{_openExchangeRatesSettings.ApiKey}";
         try
@@ -31,7 +33,13 @@ public class OpenExchangeRatesClient : ICurrencyRateProvider
             var response = await _commonHttpClient.SendRequestAsync<OpenExchangeRatesResponse>(url);
             _logger.LogDebug("Response content from OpenExchangeRates API: {ResponseContent}", response);
 
-            var currencyRate = ConvertOpenExcangeRatesToCurrencyRates(response);
+            _logger.LogDebug("Response content from Fixer API: {ResponseContent}", response);
+            var currencyRate = new CurrencyRateMessage
+            {
+                BaseCurrency = Enum.Parse<Currency>(response.Base),
+                Rates = response.Rates,
+                Date = response.Date,
+            };
             _logger.LogDebug("Parsed currency rate response: {CurrencyRate}", currencyRate);
 
             return currencyRate;
@@ -43,9 +51,9 @@ public class OpenExchangeRatesClient : ICurrencyRateProvider
         }
     }
 
-    private CurrencyRateResponse ConvertOpenExcangeRatesToCurrencyRates(OpenExchangeRatesResponse response)
+    private CurrencyRateMessage ConvertOpenExcangeRatesToCurrencyRates(OpenExchangeRatesResponse response)
     {
-        var currencyRateResponse = new CurrencyRateResponse
+        var CurrencyRateMessage = new CurrencyRateMessage
         {
             BaseCurrency = Currency.USD,
             Rates = new Dictionary<string, decimal>(),
@@ -58,7 +66,7 @@ public class OpenExchangeRatesClient : ICurrencyRateProvider
             if (Enum.TryParse<Currency>(rate.Key, out var currency))
             {
                 string currencyPair = $"{response.Base}{rate.Key}";
-                currencyRateResponse.Rates[currencyPair] = rate.Value;
+                CurrencyRateMessage.Rates[currencyPair] = rate.Value;
                 _logger.LogDebug("Added currency pair: {CurrencyPair}, exchange rate: {Rate}", currencyPair, rate.Value);
             }
             else
@@ -67,6 +75,6 @@ public class OpenExchangeRatesClient : ICurrencyRateProvider
             }
         }
 
-        return currencyRateResponse;
+        return CurrencyRateMessage;
     }
 }

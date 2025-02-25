@@ -1,74 +1,74 @@
-using MassTransit;
+﻿using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MYPBackendMicroserviceIntegrations.Messages;
 using RatesProvider.Application.Interfaces;
-using RatesProvider.Application.Models;
 
 namespace RatesProvider.Application.Services;
 
 public class CurrencyRateManager : ICurrencyRateManager
 {
-    private readonly ICurrencyRateProvider _providerFixer;
-    private readonly ICurrencyRateProvider _providerCurrencyApi;
-    private readonly ICurrencyRateProvider _providerOpenExchangeRates;
+    public int CurrentProviderId { get; private set; }
     private IRatesProviderContext _context;
-    private readonly IBus _bus;
+    private readonly List<ICurrencyRateProvider> _providers;
     private readonly ILogger _logger;
+    private readonly IBus _bus;
 
     public CurrencyRateManager(IRatesProviderContext context,
         [FromKeyedServices("Fixer")] ICurrencyRateProvider providerFixer,
         [FromKeyedServices("CurrencyApi")] ICurrencyRateProvider providerCurrencyApi,
         [FromKeyedServices("OpenExchangeRates")] ICurrencyRateProvider providerOpenExchangeRates,
-         ILogger<CurrencyRateManager> logger,
-        IBus bus)
+         ILogger<CurrencyRateManager> logger, IBus bus)
     {
-
-        _providerOpenExchangeRates = providerOpenExchangeRates;
-        _providerCurrencyApi = providerCurrencyApi;
-        _providerFixer = providerFixer;
         _context = context;
-
         _logger = logger;
         _bus = bus;
+        CurrentProviderId = 0; // провайдер с которого начинаем
+        _providers = new List<ICurrencyRateProvider>
+            {
+                providerFixer,
+                providerCurrencyApi,
+                providerOpenExchangeRates
+            };
+        _context.SetCurrencyRatesProvider(_providers[CurrentProviderId]);
     }
-    
-    public async Task<CurrencyRateResponse> GetRatesAsync()
+
+    public async Task<CurrencyRateMessage> GetRatesAsync()
     {
-        CurrencyRateResponse result = default;
-        _context.SetCurrencyRatesProvider(_providerFixer);
-
-        try
+      
+        var result = await _context.GetRatesAsync();
+        if (result?.Rates.Any() == true)
         {
-            _logger.LogInformation("Setting the currency rate provider to {ProviderType}", _providerOpenExchangeRates.GetType().Name);
-            _context.SetCurrencyRatesProvider(_providerOpenExchangeRates);
-
-            _logger.LogInformation("Attempting to retrieve currency rates...");
-
-            result = await _context.GetRatesAsync();
-
-            if (result != null)
-            {
-                _logger.LogInformation("Successfully retrieved currency rates.");
-            }
-            else
-            {
-                _logger.LogError("No currency rates were returned.");
-            }
+            _logger.LogInformation("Successfully retrieved currency rates from {ProviderType}", _providers[CurrentProviderId].GetType().Name);
+            await _bus.Publish(result);
+            return result;
         }
 
+        _logger.LogWarning("No data returned from {ProviderType}. Throwing exception to switch provider.");
+        throw new Exception($"Provider {_providers[CurrentProviderId].GetType().Name} failed to fetch rates.");
 
-        catch (Exception ex)
-
-        {
-            _logger.LogError(ex, "An error occurred while retrieving currency rates.");
-
-        }
-
-        await _bus.Publish(result);
-        return result;
     }
 
+    public void SetNextProvider()
+    {
+        if (CurrentProviderId != 2)
+        {
+            CurrentProviderId++;
+        }
+        else
+        {
+            CurrentProviderId = 0;
+        }
+
+        _context.SetCurrencyRatesProvider(_providers[CurrentProviderId]);
+
+        _logger.LogInformation("Switched to provider: {ProviderType}", _providers[CurrentProviderId].GetType().Name);
+    }
 }
+
+
+
+
 
 
 

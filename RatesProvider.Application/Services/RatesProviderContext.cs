@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using MYPBackendMicroserviceIntegrations.Messages;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
 
@@ -22,9 +23,9 @@ namespace RatesProvider.Application.Services
             _logger.LogInformation("CurrencyRateProvider has been set to: {ProviderType}", _currencyRateProvider.GetType().Name);   
         }
 
-        public async Task<CurrencyRateResponse> GetRatesAsync()
+        public async Task<CurrencyRateMessage> GetRatesAsync()
         {
-            CurrencyRateResponse response = default;
+            CurrencyRateMessage response = default;
             TimeSpan interval = new TimeSpan(0, 0, 2);
 
             for (int i = 0; i < 3; i++)
@@ -33,10 +34,7 @@ namespace RatesProvider.Application.Services
                 {
                     _logger.LogInformation("Attempting to fetch currency rates, attempt {AttemptNumber}/3", i + 1);
                     response = await _currencyRateProvider.GetCurrencyRatesAsync();
-                    if (response!=null)
-                    {
-                        break;
-                    }
+                    return response;
 
                 }
                 catch (Exception ex)
@@ -46,8 +44,9 @@ namespace RatesProvider.Application.Services
 
                 }
             }
-            _logger.LogError("All attempts to fetch currency rates failed.");
-            return response;
+            throw new Exception("All attempts to fetch currency rates failed.");
         }
+
+
     }
 }

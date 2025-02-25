@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MYPBackendMicroserviceIntegrations.Enums;
+using MYPBackendMicroserviceIntegrations.Messages;
 using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Interfaces;
 using RatesProvider.Application.Models;
@@ -23,7 +25,7 @@ public class CurrencyApiClient : ICurrencyRateProvider
         _logger = logger;
     }
 
-    public async Task<CurrencyRateResponse> GetCurrencyRatesAsync()
+    public async Task<CurrencyRateMessage> GetCurrencyRatesAsync()
     {
         var url = $"{_currencyApiSettings.BaseUrl}{_currencyApiSettings.QueryOption}{_currencyApiSettings.ApiKey}";
 
@@ -44,7 +46,7 @@ public class CurrencyApiClient : ICurrencyRateProvider
         }
     }
 
-    private CurrencyRateResponse ConvertCurrencyApiToCurrencyRates(CurrencyResponse response)
+    private CurrencyRateMessage ConvertCurrencyApiToCurrencyRates(CurrencyResponse response)
     {
         var baseCurrency = Currency.USD;
         var date = response.Meta?.LastUpdatedAt ?? DateTime.Now;
@@ -94,7 +96,7 @@ public class CurrencyApiClient : ICurrencyRateProvider
             _logger.LogDebug("Added currency ARS with value: {Value}", response.Data.ARS.Value);
         }
 
-        return new CurrencyRateResponse
+        return new CurrencyRateMessage
         {
             BaseCurrency = baseCurrency,
             Rates = rates,
