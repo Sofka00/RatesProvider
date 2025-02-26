@@ -37,7 +37,7 @@ namespace RatesProvider.Application.Tests
         [Fact]
         public async Task GetRatesAsync_ShouldReturnRates_WhenProviderSucceeds()
         {
-
+            // Arrange
             var fakeResponse = new CurrencyRateMessage
             {
                 Rates = new Dictionary<string, decimal> { { "USD", 1.1m } }
@@ -45,8 +45,10 @@ namespace RatesProvider.Application.Tests
 
             _mockContext.Setup(c => c.GetRatesAsync()).ReturnsAsync(fakeResponse);
 
+            // Act
             var result = await _manager.GetRatesAsync();
 
+            // Assert
             Assert.NotNull(result);
             Assert.NotEmpty(result.Rates);
             _mockBus.Verify(bus => bus.Publish(fakeResponse, default), Times.Once);
@@ -55,18 +57,23 @@ namespace RatesProvider.Application.Tests
         [Fact]
         public async Task GetRatesAsync_ShouldThrowException_WhenProviderFails()
         {
+            // Arrange
             _mockContext.Setup(c => c.GetRatesAsync()).ReturnsAsync((CurrencyRateMessage)null);
 
+            // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => _manager.GetRatesAsync());
         }
 
         [Fact]
         public void SetNextProvider_ShouldSwitchProvidersCorrectly()
         {
-
+            // Arrange
             Assert.Equal(0, _manager.CurrentProviderId);
 
+            // Act 
             _manager.SetNextProvider();
+
+            // Assert
             Assert.Equal(1, _manager.CurrentProviderId);
 
             _manager.SetNextProvider();
@@ -75,9 +82,5 @@ namespace RatesProvider.Application.Tests
             _manager.SetNextProvider();
             Assert.Equal(0, _manager.CurrentProviderId);
         }
-
     }
-
 }
-
-

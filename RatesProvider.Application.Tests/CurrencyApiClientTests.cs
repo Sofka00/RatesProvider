@@ -26,6 +26,7 @@ public class CurrencyApiClientTests
     [Fact]
     public async Task GetCurrencyRatesAsync_SuccessfulResponse_ReturnsCurrencyRateMessage()
     {
+        // Arrange
         var currencyResponse = new CurrencyResponse
         {
             Meta = new Meta { LastUpdatedAt = DateTime.Now.AddDays(-1) },

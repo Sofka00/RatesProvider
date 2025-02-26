@@ -4,8 +4,6 @@ using Moq;
 using MYPBackendMicroserviceIntegrations.Enums;
 using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Integrations;
-using RatesProvider.Application.Interfaces;
-using RatesProvider.Application.Models;
 using RatesProvider.Application.Models.OpenExchangeRatesModels;
 
 namespace RatesProvider.Application.Tests;
@@ -28,6 +26,7 @@ public class OpenExchangeRatesClientTests
     [Fact]
     public async Task GetCurrencyRatesAsync_SuccessfulResponse_ReturnsCurrencyRateMessage()
     {
+        // Arrange
         var currencyResponse = new OpenExchangeRatesResponse
         {
             Base = "USD",
@@ -44,9 +43,10 @@ public class OpenExchangeRatesClientTests
 
         var client = new OpenExchangeRatesClient(_openExchangeRatesSettings.Object, _commonHttpClient.Object, _logger.Object);
 
-        
+        // Act
         var result = await client.GetCurrencyRatesAsync();
 
+        // Assert
         Assert.NotNull(result);
         Assert.Equal(Currency.USD, result.BaseCurrency);
         Assert.Contains("USDEUR", result.Rates.Keys);
@@ -58,7 +58,7 @@ public class OpenExchangeRatesClientTests
     [Fact]
     public async Task GetCurrencyRatesAsync_InvalidCurrency_LogsError()
     {
-      
+        // Arrange
         var expectedResponse = new OpenExchangeRatesResponse
         {
             Base = "USD",
@@ -74,12 +74,12 @@ public class OpenExchangeRatesClientTests
 
         var client = new OpenExchangeRatesClient(_openExchangeRatesSettings.Object, _commonHttpClient.Object, _logger.Object);
 
-      
+        // Act
         var result = await client.GetCurrencyRatesAsync();
 
-   
+        // Assert
         Assert.NotNull(result);
         Assert.Equal(Currency.USD, result.BaseCurrency);
-        Assert.Empty(result.Rates); 
+        Assert.Empty(result.Rates);
     }
 }
