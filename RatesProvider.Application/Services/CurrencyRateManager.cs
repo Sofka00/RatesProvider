@@ -26,8 +26,8 @@ public class CurrencyRateManager : ICurrencyRateManager
         CurrentProviderId = 0; // провайдер с которого начинаем
         _providers = new List<ICurrencyRateProvider>
             {
-                providerCurrencyApi,
                 providerOpenExchangeRates,
+                providerCurrencyApi,
                 providerFixer
             };
         _context.SetCurrencyRatesProvider(_providers[CurrentProviderId]);
@@ -43,7 +43,7 @@ public class CurrencyRateManager : ICurrencyRateManager
             return result;
         }
 
-        _logger.LogWarning("No data returned from {ProviderType}. Throwing exception to switch provider.");
+        _logger.LogWarning("No data returned from {ProviderType} Throwing exception to switch provider.", _providers[CurrentProviderId].GetType().Name);
         throw new Exception($"Provider {_providers[CurrentProviderId].GetType().Name} failed to fetch rates.");
     }
 
