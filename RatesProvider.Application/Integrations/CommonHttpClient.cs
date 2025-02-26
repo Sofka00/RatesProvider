@@ -19,7 +19,6 @@ public class CommonHttpClient : ICommonHttpClient
     public async Task<T> SendRequestAsync<T>(string url)
     {
         T result = default(T);
-        TimeSpan interval = new TimeSpan(0, 0, 2);
 
         try
         {
@@ -58,4 +57,3 @@ public class CommonHttpClient : ICommonHttpClient
         return result;
     }
 }
-

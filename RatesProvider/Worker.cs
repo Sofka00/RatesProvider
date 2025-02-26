@@ -1,4 +1,6 @@
 using MassTransit;
+using Microsoft.Extensions.Options;
+using RatesProvider.Application.Configuration;
 using RatesProvider.Application.Exeptions;
 using RatesProvider.Application.Interfaces;
 
@@ -6,13 +8,13 @@ public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
     private readonly ICurrencyRateManager _currencyRateManager;
-    private readonly IBus _bus;
+    private readonly CommonHttpClientSettings _settings;
 
-    public Worker(ILogger<Worker> logger, ICurrencyRateManager currencyRateManager, IBus bus)
+    public Worker(ILogger<Worker> logger, ICurrencyRateManager currencyRateManager, IOptions<CommonHttpClientSettings> commonHttpClientSettings)
     {
         _logger = logger;
         _currencyRateManager = currencyRateManager;
-        _bus = bus;
+        _settings = commonHttpClientSettings.Value;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -42,7 +44,7 @@ public class Worker : BackgroundService
             }
             finally
             {
-                await Task.Delay(TimeSpan.FromHours(1));
+                await Task.Delay(_settings.Timeout, stoppingToken);
             }
         }
     }

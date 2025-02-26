@@ -26,6 +26,7 @@ if (builder.Environment.IsDevelopment())
 builder.Services.Configure<OpenExchangeRatesClientSettings>(builder.Configuration.GetSection("OpenExchangeClient"));
 builder.Services.Configure<CurrencyApiClientSettings>(builder.Configuration.GetSection("CurrencyApiClient"));
 builder.Services.Configure<FixerClientSettings>(builder.Configuration.GetSection("FixerClient"));
+builder.Services.Configure<CommonHttpClientSettings>(builder.Configuration.GetSection("CommonHttpClient"));
 builder.Services.AddHostedService<Worker>();
 builder.Services.AddApplicationServices();
 
